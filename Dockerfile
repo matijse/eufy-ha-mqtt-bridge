@@ -1,6 +1,4 @@
-FROM node:14-alpine
-
-RUN apk add python
+FROM node:14
 
 WORKDIR /app
 
