@@ -1,0 +1,20 @@
+{
+  "name": "eufy-ha-mqtt-bridge",
+  "version": "1.0.0",
+  "description": "Send motion events from Eufy cameras to Home Assistant via MQTT",
+  "main": "index.js",
+  "scripts": {
+    "start": "NODE_ENV=production node --unhandled-rejections=strict index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async-mqtt": "^2.6.1",
+    "eufy-node-client": "^0.4.0",
+    "get-value": "^3.0.1",
+    "inquirer": "^7.3.3",
+    "sqlite3": "^5.0.0",
+    "winston": "^3.3.3"
+  }
+}

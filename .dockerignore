@@ -1,0 +1,7 @@
+.idea
+.git
+
+node_modules
+
+data/*
+!data/.gitkeep

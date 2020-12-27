@@ -1,0 +1,5 @@
+module.exports = {
+  OTHER: 'UNKNOWN',
+  VIDEO_DOORBELL_2K_BATTERY: 'T8210',
+  EUFYCAM_2_PRO: 'T8140',
+}
