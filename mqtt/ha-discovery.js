@@ -21,6 +21,16 @@ class HaDiscovery {
           unique_id: `${device.id}_motion`
         })
       })
+
+      // Thumbnail
+      configs.push({
+        topic: `homeassistant/camera/eufy/${device.id}_thumbnail/config`,
+        message: JSON.stringify({
+          name: `${device.name} - Last event`,
+          topic: `${this.thumbnailTopic(device.id)}`,
+          unique_id: `${device.id}_thumbnail`
+        })
+      })
     }
 
     if ([DeviceType.VIDEO_DOORBELL_2K_BATTERY].includes(deviceType)) {
@@ -49,6 +59,10 @@ class HaDiscovery {
 
   doorbellPressedBaseTopic (device_sn) {
     return `homeassistant/binary_sensor/eufy/${device_sn}_doorbell`
+  }
+
+  thumbnailTopic (device_sn) {
+    return `homeassistant/camera/eufy/${device_sn}_thumbnail`
   }
 }
 

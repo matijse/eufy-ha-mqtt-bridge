@@ -1,5 +1,6 @@
 const MQTT = require('async-mqtt')
 const get = require('get-value')
+const fetch = require('node-fetch')
 const winston = require('winston')
 const DB = require('../db')
 const Settings = require('../enums/settings')
@@ -108,6 +109,12 @@ class MqttClient {
     } catch (e) {
       winston.error(`Failure in doorbellEvent`, { exception: e })
     }
+
+    const thumbnail = get(event, 'payload.payload.pic_url', { default: false })
+
+    if (thumbnail) {
+      await this.uploadThumbnail(device_sn, thumbnail)
+    }
   }
 
   async motionDetectedEvent (event) {
@@ -130,6 +137,22 @@ class MqttClient {
     } catch (e) {
       winston.error(`Failure in doorbellEvent`, { exception: e })
     }
+
+    const thumbnail = get(event, 'payload.payload.pic_url', { default: false })
+
+    if (thumbnail) {
+      await this.uploadThumbnail(device_sn, thumbnail)
+    }
+  }
+
+  async uploadThumbnail(device_sn, thumbnail_url) {
+    winston.debug(`Uploading new thumbnail for ${device_sn} from ${thumbnail_url}`)
+    const response = await fetch(thumbnail_url)
+    const image = await response.buffer()
+
+    const topic = HaDiscovery.thumbnailTopic(device_sn)
+
+    await this.client.publish(topic, image)
   }
 
 }
