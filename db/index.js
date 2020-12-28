@@ -67,11 +67,11 @@ class DB {
     const id = get(push, 'id', { default: null })
     const station_sn = get(push, 'payload.station_sn', { default: null })
     const device_sn = get(push, 'payload.device_sn', { default: null })
-    let type = parseInt(get(notification, 'payload.payload.event_type', { default: 0 }))
+    let type = parseInt(get(push, 'payload.payload.event_type', { default: 0 }))
     if (type === 0) {
-      type = parseInt(get(notification, 'payload.type', { default: 0 }))
+      type = parseInt(get(push, 'payload.type', { default: 0 }))
     }
-    this.db.run('INSERT INTO push_payloads (id, station_sn, device_sn, type, payload) VALUES (?, ?, ?, ?)', [
+    this.db.run('INSERT INTO push_payloads (id, station_sn, device_sn, type, payload) VALUES (?, ?, ?, ?, ?)', [
       id,
       station_sn,
       device_sn,
