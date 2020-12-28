@@ -15,7 +15,21 @@ class MqttClient {
 
     this.client = await MQTT.connectAsync(url, {
       username: username,
-      password: password
+      password: password,
+      keepalive: 60,
+      reconnectPeriod: 1000
+    })
+
+    this.client.on('error', error => {
+      winston.error(`MQTT error`, { error })
+    })
+
+    this.client.on('reconnect', () => {
+      winston.info(`MQTT reconnect`)
+    })
+
+    this.client.on('close', () => {
+      winston.info('MQTT connection closed')
     })
   }
 
