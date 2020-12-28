@@ -31,6 +31,22 @@ class MqttClient {
     this.client.on('close', () => {
       winston.info('MQTT connection closed')
     })
+
+    this.client.on('message', async (topic, message) => {
+      winston.debug(`MQTT message: [${topic}]: ${message.toString()}`)
+      if (topic === 'homeassistant/status') {
+        if (message.toString() === 'online') {
+          await this.setupAutoDiscovery()
+        }
+      }
+    })
+
+    try {
+      await this.client.subscribe('homeassistant/status')
+      winston.debug(`Subscribed to homeassistant/status`)
+    } catch (e) {
+      winston.error(`Error subscribing to homeassistant/status`, { exception: e })
+    }
   }
 
   async setupAutoDiscovery () {
