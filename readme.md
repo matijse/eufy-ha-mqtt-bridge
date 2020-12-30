@@ -27,6 +27,9 @@ The following sensors are automatically added to Home Assistant via MQTT discove
     * Eufy video doorbell 2K
 * Doorbell button pressed (binary sensor)
     * Eufy video doorbell 2K
+* Thumbnail of Last event (camera sensor)
+    * Eufy Cam 2 Pro
+    * Eufy video doorbell 2K
     
 These can be used to trigger automations based on motion / button pressed.
 
@@ -39,32 +42,40 @@ be discovered). Mount this directory to a local folder to be able to view them. 
 plaintext in the SQLite database. Replace `/path/to/local/data/folder` below with the location where you want to 
 store this data.
 
-```shell
-docker run \
-   -it \
-   --restart unless-stoppped \
-   -v /path/to/local/data/folder:/app/data \
-   matijse/eufy-ha-mqtt-bridge
-```
-
 If you run your MQTT broker on the same host as this Docker image, it cannot simply connect to `localhost` from inside
 this Docker image. In that case, add a line to add the correct IP for the Docker network inside the image as 
-`dockerhost`. You can then use `mqtt://dockerhost:1883` as the MQTT url.
+`dockerhost`. You can then use `mqtt://dockerhost:1883` as the MQTT url. Otherwise, you can remove that line from the
+examples below.
+
+First, run the script once interactively to input your credentials:
 
 ```shell
 docker run \
+   --rm \
    -it \
-   --restart unless-stoppped \
    -v /path/to/local/data/folder:/app/data \
    --add-host=dockerhost:`docker network inspect --format='{{range .IPAM.Config}}{{.Gateway}}{{end}}' bridge` \
    matijse/eufy-ha-mqtt-bridge
 ```
 
-After running the image for the first time, you are asked for your Eufy credentials and MQTT information. At the 
-moment it is not possible to use an account with 2FA enabled, so I recommend inviting a user to your Eufy account
-with a strong random generated password. 
+You will be asked for your Eufy credentials and MQTT information. At the moment it is not possible to use an account
+with 2FA enabled. If you use the same credentials on the app, you might be logged out here when you login in the app,
+so I recommend creating a second account (with a strong random generated password and no 2FA) and invite it to 
+your Eufy account. 
 
 For the MQTT connection, it asks for your MQTT Url. Use the form `mqtt://{ip}:{port}` or `mqtt://{host}:{port}`.
+
+After the initial setup, you can stop this script and start a long running container: 
+
+```shell
+docker run \
+   -d \
+   --name eufy-bridge
+   --restart unless-stopped \
+   -v /path/to/local/data/folder:/app/data \
+   --add-host=dockerhost:`docker network inspect --format='{{range .IPAM.Config}}{{.Gateway}}{{end}}' bridge` \
+   matijse/eufy-ha-mqtt-bridge
+```
 
 ### Run via npm
 
@@ -106,4 +117,13 @@ binary_sensor:
     payload_on: motion
     payload_off: clear
     off_delay: 5
+```
+
+Thumbnail of last event:
+
+```yaml
+camera:
+  - platform: mqtt
+    name: Camera - Last event
+    topic: homeassistant/camera/eufy/{device_sn}_thumbnail
 ```
