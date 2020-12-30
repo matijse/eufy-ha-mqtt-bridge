@@ -33,44 +33,44 @@ The following sensors are automatically added to Home Assistant via MQTT discove
     
 These can be used to trigger automations based on motion / button pressed.
 
-## Setup
+## Setup 
 
-### Run via Docker
+### Docker configuration
 
-The data folder contains the settings, logs and a record of all push notifications (so new types of notifications can
-be discovered). Mount this directory to a local folder to be able to view them. Note that the passwords are stored
-plaintext in the SQLite database. Replace `/path/to/local/data/folder` below with the location where you want to 
-store this data.
+The data folder contains the config, logs and a record of all push notifications (so new types of notifications can
+be discovered). Mount this directory to a local folder. Replace `/path/to/local/data/folder`
+below with the location where you want to store this data.
 
 If you run your MQTT broker on the same host as this Docker image, it cannot simply connect to `localhost` from inside
 this Docker image. In that case, add a line to add the correct IP for the Docker network inside the image as 
 `dockerhost`. You can then use `mqtt://dockerhost:1883` as the MQTT url. Otherwise, you can remove that line from the
-examples below.
+example below.
 
-First, run the script once interactively to input your credentials:
+In the data directory, you will need to create a `config.yml` file with your credentials. It should contain the 
+following contents:
 
-```shell
-docker run \
-   --rm \
-   -it \
-   -v /path/to/local/data/folder:/app/data \
-   --add-host=dockerhost:`docker network inspect --format='{{range .IPAM.Config}}{{.Gateway}}{{end}}' bridge` \
-   matijse/eufy-ha-mqtt-bridge
+```yaml
+eufy:
+  username: "your@email"
+  password: "password"
+mqtt:
+  url: "mqtt://dockerhost:1883"
+  username: "user"
+  password: "password"
 ```
 
-You will be asked for your Eufy credentials and MQTT information. At the moment it is not possible to use an account
-with 2FA enabled. If you use the same credentials on the app, you might be logged out here when you login in the app,
-so I recommend creating a second account (with a strong random generated password and no 2FA) and invite it to 
-your Eufy account. 
+At the moment it is not possible to use an account with 2FA enabled. If you use the same credentials on the app, you 
+might be logged out here when you login in the app, so I recommend creating a second account (with a strong random 
+generated password and no 2FA) and invite it to your Eufy account.
 
-For the MQTT connection, it asks for your MQTT Url. Use the form `mqtt://{ip}:{port}` or `mqtt://{host}:{port}`.
+### Run via Docker
 
-After the initial setup, you can stop this script and start a long running container: 
+Run the container, with a volume mapping to the local data directory, for example:
 
 ```shell
 docker run \
    -d \
-   --name eufy-bridge
+   --name eufy-bridge \
    --restart unless-stopped \
    -v /path/to/local/data/folder:/app/data \
    --add-host=dockerhost:`docker network inspect --format='{{range .IPAM.Config}}{{.Gateway}}{{end}}' bridge` \
@@ -82,6 +82,7 @@ docker run \
 To run directly via npm:
 
 1. Clone this repository
+1. Create a `config.yml` file in the `data` folder, for contents see above.
 1. Run `npm install`
 1. Run `npm run start`
 

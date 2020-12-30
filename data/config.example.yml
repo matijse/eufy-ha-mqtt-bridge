@@ -1,0 +1,7 @@
+eufy:
+  username: "your@email"
+  password: "password"
+mqtt:
+  url: "mqtt://dockerhost:1883"
+  username: "user"
+  password: "password"

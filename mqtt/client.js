@@ -3,20 +3,16 @@ const get = require('get-value')
 const fetch = require('node-fetch')
 const winston = require('winston')
 const DB = require('../db')
-const Settings = require('../enums/settings')
+const config = require('../config')
 const NotificationType = require('../enums/notification_type')
 const HaDiscovery = require('./ha-discovery')
 
 class MqttClient {
 
   async connect() {
-    const url = await DB.getSetting(Settings.MQTT_URL)
-    const username = await DB.getSetting(Settings.MQTT_USERNAME)
-    const password = await DB.getSetting(Settings.MQTT_PASSWORD)
-
-    this.client = await MQTT.connectAsync(url, {
-      username: username,
-      password: password,
+    this.client = await MQTT.connectAsync(config.mqttUrl, {
+      username: config.mqttUsername,
+      password: config.mqttPassword,
       keepalive: 60,
       reconnectPeriod: 1000
     })

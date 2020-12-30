@@ -15,12 +15,10 @@ winston.configure({
   ]
 })
 
-if (process.env.NODE_ENV !== 'production') {
-  winston.add(new winston.transports.Console({
-    level: 'debug',
-    format: winston.format.simple(),
-  }));
-}
+winston.add(new winston.transports.Console({
+  level: process.env.NODE_ENV === 'production' ? 'error' : 'debug',
+  format: winston.format.simple(),
+}));
 
 const { EufyClient } = require('./eufy')
 

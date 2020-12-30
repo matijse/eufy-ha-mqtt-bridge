@@ -3,4 +3,4 @@
 node_modules
 
 data/*
-!data/.gitkeep
+!data/config.example.yml
