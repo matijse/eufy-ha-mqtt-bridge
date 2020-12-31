@@ -69,6 +69,9 @@ class MqttClient {
   async processPushNotification (notification) {
     let type = parseInt(get(notification, 'payload.payload.event_type', { default: 0 }))
     if (type === 0) {
+      type = parseInt(get(notification, 'payload.doorbell.event_type', { default: 0 }))
+    }
+    if (type === 0) {
       type = parseInt(get(notification, 'payload.type', { default: 0 }))
     }
 
@@ -90,14 +93,24 @@ class MqttClient {
     if (!device_sn) {
       device_sn = get(event, 'payload.payload.device_sn')
       if (!device_sn) {
-        winston.warn(`Got doorbellEvent with unknown device_sn`, { event })
-        return
+        device_sn = get(event, 'payload.doorbell.device_sn')
+        if (!device_sn) {
+          winston.warn(`Got doorbellEvent with unknown device_sn`, { event })
+          return
+        }
       }
     }
 
     const attributes = {
       event_time: get(event, 'payload.event_time'),
       thumbnail: get(event, 'payload.payload.pic_url')
+    }
+
+    if (!attributes.event_time) {
+      attributes.event_time = get(event, 'payload.doorbell.event_time')
+    }
+    if (!attributes.thumbnail) {
+      attributes.thumbnail = get(event, 'payload.doorbell.pic_url')
     }
 
     try {
@@ -106,10 +119,8 @@ class MqttClient {
       winston.error(`Failure in doorbellEvent`, { exception: e })
     }
 
-    const thumbnail = get(event, 'payload.payload.pic_url', { default: false })
-
-    if (thumbnail) {
-      await this.uploadThumbnail(device_sn, thumbnail)
+    if (attributes.thumbnail) {
+      await this.uploadThumbnail(device_sn, attributes.thumbnail)
     }
   }
 
@@ -118,8 +129,11 @@ class MqttClient {
     if (!device_sn) {
       device_sn = get(event, 'payload.payload.device_sn')
       if (!device_sn) {
-        winston.warn(`Got motionDetectedEvent with unknown device_sn`, { event })
-        return
+        device_sn = get(event, 'payload.doorbell.device_sn')
+        if (!device_sn) {
+          winston.warn(`Got motionDetectedEvent with unknown device_sn`, { event })
+          return
+        }
       }
     }
 
@@ -128,16 +142,21 @@ class MqttClient {
       thumbnail: get(event, 'payload.payload.pic_url')
     }
 
+    if (!attributes.event_time) {
+      attributes.event_time = get(event, 'payload.doorbell.event_time')
+    }
+    if (!attributes.thumbnail) {
+      attributes.thumbnail = get(event, 'payload.doorbell.pic_url')
+    }
+
     try {
       await this.sendMotionDetectedEvent(device_sn, attributes)
     } catch (e) {
       winston.error(`Failure in doorbellEvent`, { exception: e })
     }
 
-    const thumbnail = get(event, 'payload.payload.pic_url', { default: false })
-
-    if (thumbnail) {
-      await this.uploadThumbnail(device_sn, thumbnail)
+    if (attributes.thumbnail) {
+      await this.uploadThumbnail(device_sn, attributes.thumbnail)
     }
   }
 

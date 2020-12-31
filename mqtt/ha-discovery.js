@@ -1,4 +1,4 @@
-const DeviceType = require('../enums/device_type')
+const { DeviceType } = require('../enums/device_type')
 
 class HaDiscovery {
 
