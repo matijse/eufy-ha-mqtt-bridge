@@ -6,7 +6,7 @@ class HaDiscovery {
     let configs = []
     const deviceType = device.type
 
-    if ([DeviceType.EUFYCAM_2_PRO, DeviceType.VIDEO_DOORBELL_2K_BATTERY].includes(deviceType)) {
+    if ([DeviceType.EUFYCAM_2_PRO, DeviceType.VIDEO_DOORBELL_2K_BATTERY, DeviceType.FLOODLIGHT_CAMERA].includes(deviceType)) {
       // Motion detected
       configs.push({
         topic: `homeassistant/binary_sensor/eufy/${device.id}_motion/config`,
