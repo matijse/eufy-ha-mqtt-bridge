@@ -100,7 +100,7 @@ binary_sensor:
     name: Camera motion detected
     device_class: motion
     state_topic: homeassistant/binary_sensor/eufy/{device_sn}_motion/state
-    json_attribute_topic: homeassistant/binary_sensor/eufy/{device_sn}_motion/attributes
+    json_attributes_topic: homeassistant/binary_sensor/eufy/{device_sn}_motion/attributes
     payload_on: motion
     payload_off: clear
     off_delay: 5
@@ -114,7 +114,7 @@ binary_sensor:
     name: Doorbell button pressed
     device_class: motion
     state_topic: homeassistant/binary_sensor/eufy/{device_sn}_doorbell/state
-    json_attribute_topic: homeassistant/binary_sensor/eufy/{device_sn}_doorbell/attributes
+    json_attributes_topic: homeassistant/binary_sensor/eufy/{device_sn}_doorbell/attributes
     payload_on: motion
     payload_off: clear
     off_delay: 5
