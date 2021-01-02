@@ -118,6 +118,10 @@ To run directly via npm:
 1. Run `npm install`
 1. Run `npm run start`
 
+### Run as Home Assistant Add-on
+
+[MaxWinterstein](https://github.com/MaxWinterstein/) created an Home Assistant Add-on Repository containing a easy installable version of this bridge. See [MaxWinterstein/homeassistant-addons](https://github.com/MaxWinterstein/homeassistant-addons) for more information.
+
 ## Manually adding sensors
 
 When you have automatic discovery via MQTT disabled, you can add the binary sensors manually via YAML configuration:
