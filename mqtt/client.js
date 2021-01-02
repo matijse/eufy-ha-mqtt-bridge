@@ -74,10 +74,20 @@ class MqttClient {
   async processPushNotification (notification) {
     let type = parseInt(get(notification, 'payload.payload.event_type', { default: 0 }))
     if (type === 0) {
-      type = parseInt(get(notification, 'payload.doorbell.event_type', { default: 0 }))
+      type = parseInt(get(notification, 'payload.type', { default: 0 }))
     }
     if (type === 0) {
-      type = parseInt(get(notification, 'payload.type', { default: 0 }))
+      let doorbellPayload = get(notification, 'payload.doorbell')
+      // Doorbell (T8200) payload is a string; Parse to JSON and save in notification for later use.
+      if (doorbellPayload) {
+        try {
+          let parsed = JSON.parse(doorbellPayload)
+          notification.payload.doorbell = parsed
+          type = parseInt(get(parsed, 'event_type', { default: 0 }))
+        } catch (e) {
+          winston.debug(`Error parsing doorbell payload`, e)
+        }
+      }
     }
 
     winston.debug(`Got Push Notification of type ${type}`)
