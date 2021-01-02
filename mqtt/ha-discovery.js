@@ -7,51 +7,81 @@ class HaDiscovery {
     const deviceType = device.type
     const deviceSN = device.id || device.station_sn
 
-    if ([DeviceType.EUFYCAM_2_PRO, DeviceType.VIDEO_DOORBELL_2K_BATTERY, DeviceType.FLOODLIGHT_CAMERA].includes(deviceType)) {
-      // Motion detected
-      configs.push({
-        topic: `homeassistant/binary_sensor/eufy/${deviceSN}_motion/config`,
-        message: JSON.stringify({
-          name: `${device.name} - Motion detected`,
-          device_class: 'motion',
-          state_topic: `${this.motionDetectedBaseTopic(deviceSN)}/state`,
-          json_attributes_topic: `${this.motionDetectedBaseTopic(deviceSN)}/attributes`,
-          payload_on: 'motion',
-          payload_off: 'clear',
-          off_delay: 5,
-          unique_id: `${deviceSN}_motion`
-        })
-      })
-
-      // Thumbnail
-      configs.push({
-        topic: `homeassistant/camera/eufy/${deviceSN}_thumbnail/config`,
-        message: JSON.stringify({
-          name: `${device.name} - Last event`,
-          topic: `${this.thumbnailTopic(deviceSN)}`,
-          unique_id: `${deviceSN}_thumbnail`
-        })
-      })
+    // Motion detected
+    if ([
+      DeviceType.EUFYCAM_2_PRO,
+      DeviceType.EUFYCAM_2C,
+      DeviceType.VIDEO_DOORBELL_2K_BATTERY,
+      DeviceType.VIDEO_DOORBELL_2K_POWERED,
+      DeviceType.FLOODLIGHT_CAMERA,
+      DeviceType.MOTION_SENSOR
+    ].includes(deviceType)) {
+      configs.push(this.motionDetectedConfiguration(device.name, deviceSN))
     }
 
-    if ([DeviceType.VIDEO_DOORBELL_2K_BATTERY].includes(deviceType)) {
-      // Doorbell pressed
-      configs.push({
-        topic: `homeassistant/binary_sensor/eufy/${deviceSN}_doorbell/config`,
-        message: JSON.stringify({
-          name: `${device.name} - Doorbell pressed`,
-          device_class: 'motion',
-          state_topic: `${this.doorbellPressedBaseTopic(deviceSN)}/state`,
-          json_attributes_topic: `${this.doorbellPressedBaseTopic(deviceSN)}/attributes`,
-          payload_on: 'motion',
-          payload_off: 'clear',
-          off_delay: 5,
-          unique_id: `${deviceSN}_doorbell`
-        })
-      })
+    // Doorbell pressed
+    if ([
+      DeviceType.VIDEO_DOORBELL_2K_BATTERY,
+      DeviceType.VIDEO_DOORBELL_2K_POWERED
+    ].includes(deviceType)) {
+      configs.push(this.doorbellPressedConfiguration(device.name, deviceSN))
+    }
+
+    // Thumbnail
+    if ([
+      DeviceType.EUFYCAM_2_PRO,
+      DeviceType.EUFYCAM_2C,
+      DeviceType.VIDEO_DOORBELL_2K_BATTERY,
+      DeviceType.VIDEO_DOORBELL_2K_POWERED,
+      DeviceType.FLOODLIGHT_CAMERA
+    ].includes(deviceType)) {
+      configs.push(this.thumbnailConfiguration(device.name, deviceSN))
     }
 
     return configs
+  }
+
+  motionDetectedConfiguration (deviceName, deviceSN) {
+    return {
+      topic: `homeassistant/binary_sensor/eufy/${deviceSN}_motion/config`,
+      message: JSON.stringify({
+        name: `${deviceName} - Motion detected`,
+        device_class: 'motion',
+        state_topic: `${this.motionDetectedBaseTopic(deviceSN)}/state`,
+        json_attributes_topic: `${this.motionDetectedBaseTopic(deviceSN)}/attributes`,
+        payload_on: 'motion',
+        payload_off: 'clear',
+        off_delay: 5,
+        unique_id: `${deviceSN}_motion`
+      })
+    }
+  }
+
+  doorbellPressedConfiguration (deviceName, deviceSN) {
+    return {
+      topic: `homeassistant/binary_sensor/eufy/${deviceSN}_doorbell/config`,
+      message: JSON.stringify({
+        name: `${deviceName} - Doorbell pressed`,
+        device_class: 'motion',
+        state_topic: `${this.doorbellPressedBaseTopic(deviceSN)}/state`,
+        json_attributes_topic: `${this.doorbellPressedBaseTopic(deviceSN)}/attributes`,
+        payload_on: 'motion',
+        payload_off: 'clear',
+        off_delay: 5,
+        unique_id: `${deviceSN}_doorbell`
+      })
+    }
+  }
+
+  thumbnailConfiguration (deviceName, deviceSN) {
+    return {
+      topic: `homeassistant/camera/eufy/${deviceSN}_thumbnail/config`,
+      message: JSON.stringify({
+        name: `${deviceName} - Last event`,
+        topic: `${this.thumbnailTopic(deviceSN)}`,
+        unique_id: `${deviceSN}_thumbnail`
+      })
+    }
   }
 
   motionDetectedBaseTopic (device_sn) {

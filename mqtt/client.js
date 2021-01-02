@@ -83,7 +83,9 @@ class MqttClient {
         break
       case NotificationType.DOORBELL_SOMEONE_SPOTTED:
       case NotificationType.CAM_SOMEONE_SPOTTED:
+      case NotificationType.CAM_2C_SOMEONE_SPOTTED:
       case NotificationType.FLOODLIGHT_MOTION_DETECTED:
+      case NotificationType.MOTION_SENSOR_TRIGGERED:
         await this.motionDetectedEvent(notification)
         break
     }
