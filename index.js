@@ -16,7 +16,7 @@ winston.configure({
 })
 
 winston.add(new winston.transports.Console({
-  level: process.env.NODE_ENV === 'production' ? 'error' : 'debug',
+  level: process.env.NODE_CONSOLE_LOG_LEVEL ? process.env.NODE_CONSOLE_LOG_LEVEL : 'error',
   format: winston.format.simple(),
 }));
 
