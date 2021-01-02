@@ -83,8 +83,6 @@ class MqttClient {
         break
       case NotificationType.DOORBELL_SOMEONE_SPOTTED:
       case NotificationType.CAM_SOMEONE_SPOTTED:
-        await this.motionDetectedEvent(notification)
-        break
       case NotificationType.FLOODLIGHT_MOTION_DETECTED:
         await this.motionDetectedEvent(notification)
         break
@@ -98,8 +96,11 @@ class MqttClient {
       if (!device_sn) {
         device_sn = get(event, 'payload.doorbell.device_sn')
         if (!device_sn) {
-          winston.warn(`Got doorbellEvent with unknown device_sn`, { event })
-          return
+          device_sn = get(event, 'payload.station_sn')
+          if (!device_sn) {
+            winston.warn(`Got doorbellEvent with unknown device_sn`, {event})
+            return
+          }
         }
       }
     }

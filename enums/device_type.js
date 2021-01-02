@@ -6,4 +6,4 @@ exports.DeviceType = {
   FLOODLIGHT_CAMERA: 'T8420'
 }
 
-exports.supportedDevices = ['T8200', 'T8210', 'T814X', 'T8420']
+exports.supportedDevices = ['T8200', 'T8210', 'T8140', 'T8420']
