@@ -77,6 +77,18 @@ docker run \
    matijse/eufy-ha-mqtt-bridge
 ```
 
+Or add it to a Docker Compose file:
+
+```yaml
+services:
+  eufy-bridge:
+    container_name: eufy-bridge
+    image: matijse/eufy-ha-mqtt-bridge
+    restart: unless-stopped
+    volumes:
+      - /path/to/local/data/folder:/app/data
+```
+
 ### Run via npm
 
 To run directly via npm:
