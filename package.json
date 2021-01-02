@@ -4,6 +4,7 @@
   "description": "Send motion events from Eufy cameras to Home Assistant via MQTT",
   "main": "index.js",
   "scripts": {
+    "dev": "NODE_CONSOLE_LOG_LEVEL=debug node --unhandled-rejections=strict index.js",
     "start": "NODE_ENV=production node --unhandled-rejections=strict index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
