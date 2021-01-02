@@ -11,11 +11,12 @@ class EufyHttp {
 
   async refreshDevices () {
     const devices = await this.httpService.listDevices()
+    winston.silly(`Device list: `, devices)
     for (let device of devices) {
       await DB.createOrUpdateDevice(device)
-      winston.info(`Stored device: ${device.device_name} (${device.device_sn})`)
-
       const deviceType = get(device, 'device_model', { default: null })
+
+      winston.info(`Stored device: ${device.device_name} (${device.device_sn} - type: ${deviceType})`)
 
       if (!supportedDevices.includes(deviceType)) {
         winston.warn(`DEVICE ${device.device_name} NOT SUPPORTED! See: https://github.com/matijse/eufy-ha-mqtt-bridge/issues/7`)

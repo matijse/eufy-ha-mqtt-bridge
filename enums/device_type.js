@@ -3,6 +3,7 @@ exports.DeviceType = {
   VIDEO_DOORBELL_2K_POWERED: 'T8200',
   VIDEO_DOORBELL_2K_BATTERY: 'T8210',
   EUFYCAM_2_PRO: 'T8140',
+  FLOODLIGHT_CAMERA: 'T8420'
 }
 
-exports.supportedDevices = ['T8200', 'T8210', 'T814X']
+exports.supportedDevices = ['T8200', 'T8210', 'T8140', 'T8420']
