@@ -69,7 +69,8 @@ class MqttClient {
   async processPushNotification (notification) {
     let type = parseInt(get(notification, 'payload.payload.event_type', { default: 0 }))
     if (type === 0) {
-      type = parseInt(get(notification, 'payload.doorbell.event_type', { default: 0 }))
+      let payload_doorbell_parsed = JSON.parse(get(notification, 'payload.doorbell'), { default: { 'event_type': 0 } })
+      type = parseInt(get(payload_doorbell_parsed, 'event_type', { default: 0 }))
     }
     if (type === 0) {
       type = parseInt(get(notification, 'payload.type', { default: 0 }))
@@ -89,11 +90,14 @@ class MqttClient {
   }
 
   async doorbellEvent (event) {
-    let device_sn = get(event, 'payload.device_sn')
+    let payload = get(event, 'payload')
+    let device_sn = get(payload, 'device_sn')
     if (!device_sn) {
-      device_sn = get(event, 'payload.payload.device_sn')
+      payload = get(event, 'payload.payload')
+      device_sn = get(payload, 'device_sn')
       if (!device_sn) {
-        device_sn = get(event, 'payload.doorbell.device_sn')
+        payload = JSON.parse(get(event, 'payload.doorbell'))
+        device_sn = get(payload, 'device_sn')
         if (!device_sn) {
           winston.warn(`Got doorbellEvent with unknown device_sn`, { event })
           return
@@ -102,15 +106,8 @@ class MqttClient {
     }
 
     const attributes = {
-      event_time: get(event, 'payload.event_time'),
-      thumbnail: get(event, 'payload.payload.pic_url')
-    }
-
-    if (!attributes.event_time) {
-      attributes.event_time = get(event, 'payload.doorbell.event_time')
-    }
-    if (!attributes.thumbnail) {
-      attributes.thumbnail = get(event, 'payload.doorbell.pic_url')
+      event_time: get(payload, 'event_time'),
+      thumbnail: get(payload, 'pic_url')
     }
 
     try {
@@ -125,11 +122,14 @@ class MqttClient {
   }
 
   async motionDetectedEvent (event) {
-    let device_sn = get(event, 'payload.device_sn')
+    let payload = get(event, 'payload')
+    let device_sn = get(payload, 'device_sn')
     if (!device_sn) {
-      device_sn = get(event, 'payload.payload.device_sn')
+      payload = get(event, 'payload.payload')
+      device_sn = get(payload, 'device_sn')
       if (!device_sn) {
-        device_sn = get(event, 'payload.doorbell.device_sn')
+        payload = JSON.parse(get(event, 'payload.doorbell'))
+        device_sn = get(payload, 'device_sn')
         if (!device_sn) {
           winston.warn(`Got motionDetectedEvent with unknown device_sn`, { event })
           return
@@ -138,15 +138,8 @@ class MqttClient {
     }
 
     const attributes = {
-      event_time: get(event, 'payload.event_time'),
-      thumbnail: get(event, 'payload.payload.pic_url')
-    }
-
-    if (!attributes.event_time) {
-      attributes.event_time = get(event, 'payload.doorbell.event_time')
-    }
-    if (!attributes.thumbnail) {
-      attributes.thumbnail = get(event, 'payload.doorbell.pic_url')
+      event_time: get(payload, 'event_time'),
+      thumbnail: get(payload, 'pic_url')
     }
 
     try {
