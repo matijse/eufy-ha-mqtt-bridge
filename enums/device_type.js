@@ -1,5 +1,6 @@
 exports.DeviceType = {
   OTHER: 'UNKNOWN',
+  EUFYCAM_2: 'T8114',
   EUFYCAM_2C: 'T8113',
   EUFYCAM_2_PRO: 'T8140',
   FLOODLIGHT_CAMERA: 'T8420',
@@ -9,4 +10,4 @@ exports.DeviceType = {
   VIDEO_DOORBELL_2K_BATTERY: 'T8210',
 }
 
-exports.supportedDevices = ['T8200', 'T8210', 'T8140', 'T8420']
+exports.supportedDevices = ['T8114', 'T8113', 'T8140', 'T8420', 'T8400', 'T8910', 'T8200', 'T8210']

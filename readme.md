@@ -13,8 +13,14 @@ its examples.
 
 For now very limited, and only tested with
 
+* Eufy Cam 2 (T8114)
+* Eufy Cam 2 C (T8113)
 * Eufy Cam 2 Pro (T8140)
-* Eufy video doorbell 2K (T8210)
+* Eufy video doorbell 2K (powered) (T8200)
+* Eufy video doorbell 2K (battery) (T8210)
+* Floodlight Camera (T8420)
+* Indoor Cam (T8400)
+* Motion Sensor (T8910)
 
 All push messages from all devices are logged, so it would be relatively easy to add support for new devices
 
@@ -23,13 +29,27 @@ All push messages from all devices are logged, so it would be relatively easy to
 The following sensors are automatically added to Home Assistant via MQTT discovery:
 
 * Motion detected (binary sensor)
-    * Eufy Cam 2 Pro
-    * Eufy video doorbell 2K
+    * Eufy Cam 2 (T8114)
+    * Eufy Cam 2 C (T8113)
+    * Eufy Cam 2 Pro (T8140)
+    * Eufy video doorbell 2K (powered) (T8200)
+    * Eufy video doorbell 2K (battery) (T8210)
+    * Floodlight Camera (T8420)
+    * Indoor Cam (T8400)
+    * Motion Sensor (T8910)
+* Crying detected (binary sensor)
+    * Indoor Cam (T8400)
 * Doorbell button pressed (binary sensor)
-    * Eufy video doorbell 2K
+    * Eufy video doorbell 2K (powered) (T8200)
+    * Eufy video doorbell 2K (battery) (T8210)
 * Thumbnail of Last event (camera sensor)
-    * Eufy Cam 2 Pro
-    * Eufy video doorbell 2K
+    * Eufy Cam 2 (T8114)
+    * Eufy Cam 2 C (T8113)
+    * Eufy Cam 2 Pro (T8140)
+    * Eufy video doorbell 2K (powered) (T8200)
+    * Eufy video doorbell 2K (battery) (T8210)
+    * Floodlight Camera (T8420)
+    * Indoor Cam (T8400)
     
 These can be used to trigger automations based on motion / button pressed.
 

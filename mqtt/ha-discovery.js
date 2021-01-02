@@ -11,6 +11,7 @@ class HaDiscovery {
     if ([
       DeviceType.EUFYCAM_2_PRO,
       DeviceType.EUFYCAM_2C,
+      DeviceType.EUFYCAM_2,
       DeviceType.INDOOR_CAM,
       DeviceType.VIDEO_DOORBELL_2K_BATTERY,
       DeviceType.VIDEO_DOORBELL_2K_POWERED,
@@ -32,6 +33,7 @@ class HaDiscovery {
     if ([
       DeviceType.EUFYCAM_2_PRO,
       DeviceType.EUFYCAM_2C,
+      DeviceType.EUFYCAM_2,
       DeviceType.INDOOR_CAM,
       DeviceType.VIDEO_DOORBELL_2K_BATTERY,
       DeviceType.VIDEO_DOORBELL_2K_POWERED,

@@ -6,4 +6,5 @@ module.exports = {
   FLOODLIGHT_MOTION_DETECTED: 3,    // payload.type
   MOTION_SENSOR_TRIGGERED: 10,      // payload.type
   CAM_2C_SOMEONE_SPOTTED: 8,        // payload.type
+  CAM_2_SOMEONE_SPOTTED: 9,         // payload.type
 }
