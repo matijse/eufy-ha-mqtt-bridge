@@ -66,6 +66,11 @@ class MqttClient {
     await this.client.publish(`${HaDiscovery.doorbellPressedBaseTopic(device_sn)}/attributes`, JSON.stringify(attributes))
   }
 
+  async sendCryingDetectedEvent (device_sn, attributes) {
+    await this.client.publish(`${HaDiscovery.cryingDetectedBaseTopic(device_sn)}/state`, 'crying')
+    await this.client.publish(`${HaDiscovery.cryingDetectedBaseTopic(device_sn)}/attributes`, JSON.stringify(attributes))
+  }
+
   async processPushNotification (notification) {
     let type = parseInt(get(notification, 'payload.payload.event_type', { default: 0 }))
     if (type === 0) {
@@ -88,36 +93,20 @@ class MqttClient {
       case NotificationType.MOTION_SENSOR_TRIGGERED:
         await this.motionDetectedEvent(notification)
         break
+      case NotificationType.CRYING_DETECTED:
+        await this.cryingDetectedEvent(notification)
+        break
     }
   }
 
   async doorbellEvent (event) {
-    let device_sn = get(event, 'payload.device_sn')
+    let device_sn = this.getDeviceSNFromEvent(event)
     if (!device_sn) {
-      device_sn = get(event, 'payload.payload.device_sn')
-      if (!device_sn) {
-        device_sn = get(event, 'payload.doorbell.device_sn')
-        if (!device_sn) {
-          device_sn = get(event, 'payload.station_sn')
-          if (!device_sn) {
-            winston.warn(`Got doorbellEvent with unknown device_sn`, {event})
-            return
-          }
-        }
-      }
+      winston.warn(`Got doorbellEvent with unknown device_sn`, {event})
+      return
     }
 
-    const attributes = {
-      event_time: get(event, 'payload.event_time'),
-      thumbnail: get(event, 'payload.payload.pic_url')
-    }
-
-    if (!attributes.event_time) {
-      attributes.event_time = get(event, 'payload.doorbell.event_time')
-    }
-    if (!attributes.thumbnail) {
-      attributes.thumbnail = get(event, 'payload.doorbell.pic_url')
-    }
+    const attributes = this.getAttributesFromEvent(event)
 
     try {
       await this.sendDoorbellPressedEvent(device_sn, attributes)
@@ -131,37 +120,38 @@ class MqttClient {
   }
 
   async motionDetectedEvent (event) {
-    let device_sn = get(event, 'payload.device_sn')
+    let device_sn = this.getDeviceSNFromEvent(event)
     if (!device_sn) {
-      device_sn = get(event, 'payload.payload.device_sn')
-      if (!device_sn) {
-        device_sn = get(event, 'payload.doorbell.device_sn')
-        if (!device_sn) {
-          device_sn = get(event, 'payload.station_sn')
-          if (!device_sn) {
-            winston.warn(`Got motionDetectedEvent with unknown device_sn`, { event })
-            return
-          }
-        }
-      }
+      winston.warn(`Got motionDetectedEvent with unknown device_sn`, { event })
+      return
     }
 
-    const attributes = {
-      event_time: get(event, 'payload.event_time'),
-      thumbnail: get(event, 'payload.payload.pic_url')
-    }
-
-    if (!attributes.event_time) {
-      attributes.event_time = get(event, 'payload.doorbell.event_time')
-    }
-    if (!attributes.thumbnail) {
-      attributes.thumbnail = get(event, 'payload.doorbell.pic_url')
-    }
+    const attributes = this.getAttributesFromEvent(event)
 
     try {
       await this.sendMotionDetectedEvent(device_sn, attributes)
     } catch (e) {
       winston.error(`Failure in doorbellEvent`, { exception: e })
+    }
+
+    if (attributes.thumbnail) {
+      await this.uploadThumbnail(device_sn, attributes.thumbnail)
+    }
+  }
+
+  async cryingDetectedEvent(event) {
+    let device_sn = this.getDeviceSNFromEvent(event)
+    if (!device_sn) {
+      winston.warn(`Got cryingDetectedEvent with unknown device_sn`, { event })
+      return
+    }
+
+    const attributes = this.getAttributesFromEvent(event)
+
+    try {
+      await this.sendCryingDetectedEvent(device_sn, attributes)
+    } catch (e) {
+      winston.error(`Failure in cryingDetectedEvent`, { exception: e })
     }
 
     if (attributes.thumbnail) {
@@ -179,6 +169,36 @@ class MqttClient {
     await this.client.publish(topic, image)
   }
 
+  getDeviceSNFromEvent (event) {
+    let device_sn = get(event, 'payload.device_sn')
+    if (!device_sn) {
+      device_sn = get(event, 'payload.payload.device_sn')
+      if (!device_sn) {
+        device_sn = get(event, 'payload.doorbell.device_sn')
+        if (!device_sn) {
+          device_sn = get(event, 'payload.station_sn')
+        }
+      }
+    }
+
+    return device_sn
+  }
+
+  getAttributesFromEvent (event) {
+    const attributes = {
+      event_time: get(event, 'payload.event_time'),
+      thumbnail: get(event, 'payload.payload.pic_url')
+    }
+
+    if (!attributes.event_time) {
+      attributes.event_time = get(event, 'payload.doorbell.event_time')
+    }
+    if (!attributes.thumbnail) {
+      attributes.thumbnail = get(event, 'payload.doorbell.pic_url')
+    }
+
+    return attributes
+  }
 }
 
 module.exports = MqttClient
