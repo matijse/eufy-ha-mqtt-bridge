@@ -13,6 +13,7 @@ class HaDiscovery {
       DeviceType.EUFYCAM_2C,
       DeviceType.EUFYCAM_2,
       DeviceType.INDOOR_CAM,
+	  DeviceType.INDOOR_CAM_PAN_TILT,
       DeviceType.VIDEO_DOORBELL_2K_BATTERY,
       DeviceType.VIDEO_DOORBELL_2K_POWERED,
       DeviceType.FLOODLIGHT_CAMERA,
@@ -48,6 +49,13 @@ class HaDiscovery {
     ].includes(deviceType)) {
       configs.push(this.cryingDetectedConfiguration(device.name, deviceSN))
     }
+	
+	//Sound detected
+	if ([
+	  DeviceType.INDOOR_CAM,
+	].includes(deviceType)) {
+	  configs.push(this.soundDetectedConfiguration(device.name, deviceSN))
+	}	
 
     return configs
   }
@@ -96,6 +104,22 @@ class HaDiscovery {
         payload_off: 'clear',
         off_delay: 5,
         unique_id: `${deviceSN}_crying`
+      })
+    }
+  }
+  
+  soundDetectedConfiguration (deviceName, deviceSN) {
+    return {
+      topic: `homeassistant/binary_sensor/eufy/${deviceSN}_sound/config`,
+      message: JSON.stringify({
+        name: `${deviceName} - Sound detected`,
+        device_class: 'sound',
+        state_topic: `${this.soundDetectedBaseTopic(deviceSN)}/state`,
+        json_attributes_topic: `${this.soundDetectedBaseTopic(deviceSN)}/attributes`,
+        payload_on: 'sound',
+        payload_off: 'clear',
+        off_delay: 5,
+        unique_id: `${deviceSN}_sound`
       })
     }
   }
