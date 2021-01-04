@@ -70,6 +70,11 @@ class MqttClient {
     await this.client.publish(`${HaDiscovery.cryingDetectedBaseTopic(device_sn)}/state`, 'crying')
     await this.client.publish(`${HaDiscovery.cryingDetectedBaseTopic(device_sn)}/attributes`, JSON.stringify(attributes))
   }
+  
+  async sendSoundDetectedEvent (device_sn, attributes) {
+	  await this.client.publish(`${HaDiscovery.soundDetectedBaseTopic(device_sn)}/state`, 'sound')
+    await this.client.publish(`${HaDiscovery.soundDetectedBaseTopic(device_sn)}/attributes`, JSON.stringify(attributes))
+  }
 
   async processPushNotification (notification) {
     let type = parseInt(get(notification, 'payload.payload.event_type', { default: 0 }))
@@ -93,10 +98,11 @@ class MqttClient {
     winston.debug(`Got Push Notification of type ${type}`)
 
     switch (type) {
-      case NotificationType.DOORBELL_PRESSED:
+      case NotificationType.EVENT_DOORBELL_PRESSED:
         await this.doorbellEvent(notification)
         break
-      case NotificationType.DOORBELL_SOMEONE_SPOTTED:
+	    case NotificationType.EVENT_MOTION_DETECTED:
+	    case NotificationType.EVENT_SOMEONE_SPOTTED:
       case NotificationType.CAM_SOMEONE_SPOTTED:
       case NotificationType.CAM_2_SOMEONE_SPOTTED:
       case NotificationType.CAM_2C_SOMEONE_SPOTTED:
@@ -104,9 +110,12 @@ class MqttClient {
       case NotificationType.MOTION_SENSOR_TRIGGERED:
         await this.motionDetectedEvent(notification)
         break
-      case NotificationType.CRYING_DETECTED:
+      case NotificationType.EVENT_CRYING_DETECTED:
         await this.cryingDetectedEvent(notification)
         break
+	    case NotificationType.EVENT_SOUND_DETECTED:
+	      await this.soundDetectedEvent(notification)
+		    break
     }
   }
 
@@ -143,6 +152,26 @@ class MqttClient {
       await this.sendMotionDetectedEvent(device_sn, attributes)
     } catch (e) {
       winston.error(`Failure in motionDetectedEvent`, { exception: e })
+    }
+
+    if (attributes.thumbnail) {
+      await this.uploadThumbnail(device_sn, attributes.thumbnail)
+    }
+  }
+
+  async soundDetectedEvent (event) {
+    let device_sn = this.getDeviceSNFromEvent(event)
+    if (!device_sn) {
+      winston.warn(`Got soundDetectedEvent with unknown device_sn`, { event })
+      return
+    }
+
+    const attributes = this.getAttributesFromEvent(event)
+
+    try {
+      await this.sendSoundDetectedEvent(device_sn, attributes)
+    } catch (e) {
+      winston.error(`Failure in soundDetectedEvent`, { exception: e })
     }
 
     if (attributes.thumbnail) {
