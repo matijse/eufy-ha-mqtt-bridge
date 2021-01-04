@@ -119,7 +119,9 @@ To run directly via npm:
 
 ### Run as Home Assistant Add-on
 
-[MaxWinterstein](https://github.com/MaxWinterstein/) created an Home Assistant Add-on Repository containing a easy installable version of this bridge. See [MaxWinterstein/homeassistant-addons](https://github.com/MaxWinterstein/homeassistant-addons) for more information.
+[MaxWinterstein](https://github.com/MaxWinterstein/) created a Home Assistant Add-on Repository containing an easy 
+installable version of this bridge. See [MaxWinterstein/homeassistant-addons](https://github.com/MaxWinterstein/homeassistant-addons)
+for more information.
 
 ## Manually adding sensors
 
