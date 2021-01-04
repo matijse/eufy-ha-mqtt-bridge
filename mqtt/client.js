@@ -72,7 +72,7 @@ class MqttClient {
   }
   
   async sendSoundDetectedEvent (device_sn, attributes) {
-	await this.client.publish(`${HaDiscovery.soundDetectedBaseTopic(device_sn)}/state`, 'sound')
+	  await this.client.publish(`${HaDiscovery.soundDetectedBaseTopic(device_sn)}/state`, 'sound')
     await this.client.publish(`${HaDiscovery.soundDetectedBaseTopic(device_sn)}/attributes`, JSON.stringify(attributes))
   }
 
@@ -98,12 +98,11 @@ class MqttClient {
     winston.debug(`Got Push Notification of type ${type}`)
 
     switch (type) {
-      case NotificationType.DOORBELL_PRESSED:
+      case NotificationType.EVENT_DOORBELL_PRESSED:
         await this.doorbellEvent(notification)
         break
-	  case NotificationType.INDOOR_MOTION_DETECTED:
-	  case NotificationType.INDOOR_SOMEONE_SPOTTED:
-      case NotificationType.DOORBELL_SOMEONE_SPOTTED:
+	    case NotificationType.EVENT_MOTION_DETECTED:
+	    case NotificationType.EVENT_SOMEONE_SPOTTED:
       case NotificationType.CAM_SOMEONE_SPOTTED:
       case NotificationType.CAM_2_SOMEONE_SPOTTED:
       case NotificationType.CAM_2C_SOMEONE_SPOTTED:
@@ -111,12 +110,12 @@ class MqttClient {
       case NotificationType.MOTION_SENSOR_TRIGGERED:
         await this.motionDetectedEvent(notification)
         break
-      case NotificationType.CRYING_DETECTED:
+      case NotificationType.EVENT_CRYING_DETECTED:
         await this.cryingDetectedEvent(notification)
         break
-	  case NotificationType.INDOOR_SOUND_DETECTED:
-	    await this.soundDetectedEvent(notification)
-		break
+	    case NotificationType.EVENT_SOUND_DETECTED:
+	      await this.soundDetectedEvent(notification)
+		    break
     }
   }
 
