@@ -10,4 +10,5 @@ module.exports = {
   MOTION_SENSOR_TRIGGERED: 10,      // payload.type
   CAM_2C_SOMEONE_SPOTTED: 8,        // payload.type
   CAM_2_SOMEONE_SPOTTED: 9,         // payload.type
+  CAM_2C_PRO_MOTION_DETECTED: 15,   // payload.type
 }

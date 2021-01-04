@@ -106,6 +106,7 @@ class MqttClient {
       case NotificationType.CAM_SOMEONE_SPOTTED:
       case NotificationType.CAM_2_SOMEONE_SPOTTED:
       case NotificationType.CAM_2C_SOMEONE_SPOTTED:
+      case NotificationType.CAM_2C_PRO_MOTION_DETECTED:
       case NotificationType.FLOODLIGHT_MOTION_DETECTED:
       case NotificationType.MOTION_SENSOR_TRIGGERED:
         await this.motionDetectedEvent(notification)

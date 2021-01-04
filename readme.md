@@ -12,8 +12,9 @@ its examples.
 ## Supported devices
 
 * Eufy Cam 2 (T8114)
-* Eufy Cam 2 C (T8113)
 * Eufy Cam 2 Pro (T8140)
+* Eufy Cam 2 C (T8113)
+* Eufy Cam 2 C Pro (T8140)
 * Eufy video doorbell 2K (powered) (T8200)
 * Eufy video doorbell 2K (battery) (T8210)
 * Floodlight Camera (T8420)
@@ -29,8 +30,9 @@ The following sensors are automatically added to Home Assistant via MQTT discove
 
 * Motion detected (binary sensor)
     * Eufy Cam 2 (T8114)
-    * Eufy Cam 2 C (T8113)
     * Eufy Cam 2 Pro (T8140)
+    * Eufy Cam 2 C (T8113)
+    * Eufy Cam 2 C Pro (T8140)
     * Eufy video doorbell 2K (powered) (T8200)
     * Eufy video doorbell 2K (battery) (T8210)
     * Floodlight Camera (T8420)
@@ -43,8 +45,9 @@ The following sensors are automatically added to Home Assistant via MQTT discove
     * Eufy video doorbell 2K (battery) (T8210)
 * Thumbnail of Last event (camera sensor)
     * Eufy Cam 2 (T8114)
-    * Eufy Cam 2 C (T8113)
     * Eufy Cam 2 Pro (T8140)
+    * Eufy Cam 2 C (T8113)
+    * Eufy Cam 2 C Pro (T8140)
     * Eufy video doorbell 2K (powered) (T8200)
     * Eufy video doorbell 2K (battery) (T8210)
     * Floodlight Camera (T8420)
