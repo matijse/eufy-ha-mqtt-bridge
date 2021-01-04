@@ -20,6 +20,7 @@ its examples.
 * Floodlight Camera (T8420)
 * Indoor Cam (T8400)
 * Motion Sensor (T8910)
+* Door Sensor (T8900)
 
 All push messages from all devices are logged, click [here](https://github.com/matijse/eufy-ha-mqtt-bridge/issues/7) to
 help with adding support for new devices.
@@ -43,6 +44,8 @@ The following sensors are automatically added to Home Assistant via MQTT discove
 * Doorbell button pressed (binary sensor)
     * Eufy video doorbell 2K (powered) (T8200)
     * Eufy video doorbell 2K (battery) (T8210)
+* Door sensor (binary sensor)
+    * Door Sensor (T8900)
 * Thumbnail of Last event (camera sensor)
     * Eufy Cam 2 (T8114)
     * Eufy Cam 2 Pro (T8140)

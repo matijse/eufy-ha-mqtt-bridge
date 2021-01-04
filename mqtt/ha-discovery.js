@@ -59,6 +59,13 @@ class HaDiscovery {
       configs.push(this.soundDetectedConfiguration(device.name, deviceSN))
     }
 
+    // Door sensor
+    if ([
+      DeviceType.DOOR_SENSOR,
+    ].includes(deviceType)) {
+      configs.push(this.doorSensorBaseTopic(device.name, deviceSN))
+    }
+
     return configs
   }
 
@@ -137,6 +144,21 @@ class HaDiscovery {
     }
   }
 
+  doorSensorConfiguration (deviceName, deviceSN) {
+    return {
+      topic: `homeassistant/binary_sensor/eufy/${deviceSN}_door/config`,
+      message: JSON.stringify({
+        name: `${deviceName}`,
+        device_class: 'door',
+        state_topic: `${this.doorSensorBaseTopic(deviceSN)}/state`,
+        json_attributes_topic: `${this.doorSensorBaseTopic(deviceSN)}/attributes`,
+        payload_on: 'open',
+        payload_off: 'closed',
+        unique_id: `${deviceSN}_door`
+      })
+    }
+  }
+
   motionDetectedBaseTopic (device_sn) {
     return `homeassistant/binary_sensor/eufy/${device_sn}_motion`
   }
@@ -151,6 +173,10 @@ class HaDiscovery {
 
   soundDetectedBaseTopic (device_sn) {
     return `homeassistant/binary_sensor/eufy/${device_sn}_sound`
+  }
+
+  doorSensorBaseTopic (device_sn) {
+    return `homeassistant/binary_sensor/eufy/${device_sn}_door`
   }
 
   thumbnailTopic (device_sn) {

@@ -76,6 +76,11 @@ class MqttClient {
     await this.client.publish(`${HaDiscovery.soundDetectedBaseTopic(device_sn)}/attributes`, JSON.stringify(attributes))
   }
 
+  async sendDoorChangedEvent (device_sn, attributes) {
+    await this.client.publish(`${HaDiscovery.doorSensorBaseTopic(device_sn)}/state`, attributes.door)
+    await this.client.publish(`${HaDiscovery.doorSensorBaseTopic(device_sn)}/attributes`, JSON.stringify(attributes))
+  }
+
   async processPushNotification (notification) {
     let type = parseInt(get(notification, 'payload.payload.event_type', { default: 0 }))
     if (type === 0) {
@@ -117,6 +122,9 @@ class MqttClient {
 	    case NotificationType.EVENT_SOUND_DETECTED:
 	      await this.soundDetectedEvent(notification)
 		    break
+      case NotificationType.DOOR_SENSOR_CHANGED:
+        await this.doorSensorChanged(notification)
+        break
     }
   }
 
@@ -208,6 +216,29 @@ class MqttClient {
     const topic = HaDiscovery.thumbnailTopic(device_sn)
 
     await this.client.publish(topic, image)
+  }
+
+  async doorSensorChanged(event) {
+    let device_sn = this.getDeviceSNFromEvent(event)
+    if (!device_sn) {
+      winston.warn(`Got doorSensorChanged with unknown device_sn`, { event })
+      return
+    }
+
+    let attributes = this.getAttributesFromEvent(event)
+
+    let doorState = get(event, 'payload.payload.e', { default: false })
+    if (doorState === false) {
+      winston.warn(`Got doorSensorChanged with unknown doorState`, { event })
+      return
+    }
+    attributes.door = parseInt(doorState) === 1 ? 'open' : 'closed'
+
+    try {
+      await this.sendDoorChangedEvent(device_sn, attributes)
+    } catch (e) {
+      winston.error(`Failure in doorSensorChanged`, { exception: e })
+    }
   }
 
   getDeviceSNFromEvent (event) {

@@ -10,6 +10,7 @@ exports.DeviceType = {
   MOTION_SENSOR: 'T8910',
   VIDEO_DOORBELL_2K_POWERED: 'T8200',
   VIDEO_DOORBELL_2K_BATTERY: 'T8210',
+  DOOR_SENSOR: 'T8900',
 }
 
-exports.supportedDevices = ['T8114', 'T8113', 'T8140', 'T8142', 'T8420', 'T8400', 'T8410', 'T8910', 'T8200', 'T8210']
+exports.supportedDevices = ['T8114', 'T8113', 'T8140', 'T8142', 'T8420', 'T8400', 'T8410', 'T8910', 'T8200', 'T8210', 'T8900']
