@@ -70,6 +70,11 @@ class MqttClient {
     await this.client.publish(`${HaDiscovery.cryingDetectedBaseTopic(device_sn)}/state`, 'crying')
     await this.client.publish(`${HaDiscovery.cryingDetectedBaseTopic(device_sn)}/attributes`, JSON.stringify(attributes))
   }
+  
+  async sendSoundDetectedEvent (device_sn, attributes) {
+	await this.client.publish(`${HaDiscovery.soundDetectedBaseTopic(device_sn)}/state`, 'sound')
+    await this.client.publish(`${HaDiscovery.soundDetectedBaseTopic(device_sn)}/attributes`, JSON.stringify(attributes))
+  }
 
   async processPushNotification (notification) {
     let type = parseInt(get(notification, 'payload.payload.event_type', { default: 0 }))
@@ -96,6 +101,8 @@ class MqttClient {
       case NotificationType.DOORBELL_PRESSED:
         await this.doorbellEvent(notification)
         break
+	  case NotificationType.INDOOR_MOTION_DETECTED:
+	  case NotificationType.INDOOR_SOMEONE_SPOTTED:
       case NotificationType.DOORBELL_SOMEONE_SPOTTED:
       case NotificationType.CAM_SOMEONE_SPOTTED:
       case NotificationType.CAM_2_SOMEONE_SPOTTED:
@@ -107,6 +114,9 @@ class MqttClient {
       case NotificationType.CRYING_DETECTED:
         await this.cryingDetectedEvent(notification)
         break
+	  case NotificationType.INDOOR_SOUND_DETECTED:
+	    await this.soundDetectedEvent(notification)
+		break
     }
   }
 
@@ -143,6 +153,26 @@ class MqttClient {
       await this.sendMotionDetectedEvent(device_sn, attributes)
     } catch (e) {
       winston.error(`Failure in motionDetectedEvent`, { exception: e })
+    }
+
+    if (attributes.thumbnail) {
+      await this.uploadThumbnail(device_sn, attributes.thumbnail)
+    }
+  }
+
+  async soundDetectedEvent (event) {
+    let device_sn = this.getDeviceSNFromEvent(event)
+    if (!device_sn) {
+      winston.warn(`Got soundDetectedEvent with unknown device_sn`, { event })
+      return
+    }
+
+    const attributes = this.getAttributesFromEvent(event)
+
+    try {
+      await this.sendSoundDetectedEvent(device_sn, attributes)
+    } catch (e) {
+      winston.error(`Failure in soundDetectedEvent`, { exception: e })
     }
 
     if (attributes.thumbnail) {

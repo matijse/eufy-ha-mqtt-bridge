@@ -5,9 +5,10 @@ exports.DeviceType = {
   EUFYCAM_2_PRO: 'T8140',
   FLOODLIGHT_CAMERA: 'T8420',
   INDOOR_CAM: 'T8400',
+  INDOOR_CAM_PAN_TILT: 'T8410',
   MOTION_SENSOR: 'T8910',
   VIDEO_DOORBELL_2K_POWERED: 'T8200',
   VIDEO_DOORBELL_2K_BATTERY: 'T8210',
 }
 
-exports.supportedDevices = ['T8114', 'T8113', 'T8140', 'T8420', 'T8400', 'T8910', 'T8200', 'T8210']
+exports.supportedDevices = ['T8114', 'T8113', 'T8140', 'T8420', 'T8400', 'T8410', 'T8910', 'T8200', 'T8210']
