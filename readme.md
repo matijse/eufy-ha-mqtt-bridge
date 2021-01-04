@@ -11,8 +11,6 @@ its examples.
 
 ## Supported devices
 
-For now very limited, and only tested with
-
 * Eufy Cam 2 (T8114)
 * Eufy Cam 2 C (T8113)
 * Eufy Cam 2 Pro (T8140)
@@ -22,7 +20,8 @@ For now very limited, and only tested with
 * Indoor Cam (T8400)
 * Motion Sensor (T8910)
 
-All push messages from all devices are logged, so it would be relatively easy to add support for new devices
+All push messages from all devices are logged, click [here](https://github.com/matijse/eufy-ha-mqtt-bridge/issues/7) to
+help with adding support for new devices.
 
 ## Features
 
@@ -148,6 +147,20 @@ binary_sensor:
     state_topic: homeassistant/binary_sensor/eufy/{device_sn}_doorbell/state
     json_attributes_topic: homeassistant/binary_sensor/eufy/{device_sn}_doorbell/attributes
     payload_on: motion
+    payload_off: clear
+    off_delay: 5
+```
+
+Crying detected:
+
+```yaml
+binary_sensor:
+  - platform: mqtt
+    name: Crying detected
+    device_class: sound
+    state_topic: homeassistant/binary_sensor/eufy/{device_sn}_crying/state
+    json_attributes_topic: homeassistant/binary_sensor/eufy/{device_sn}_crying/attributes
+    payload_on: crying
     payload_off: clear
     off_delay: 5
 ```
