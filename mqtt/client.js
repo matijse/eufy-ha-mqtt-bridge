@@ -108,6 +108,7 @@ class MqttClient {
         break
 	    case NotificationType.EVENT_MOTION_DETECTED:
 	    case NotificationType.EVENT_SOMEONE_SPOTTED:
+      case NotificationType.CAM_E_MOTION_DETECTED:
       case NotificationType.CAM_SOMEONE_SPOTTED:
       case NotificationType.CAM_2_SOMEONE_SPOTTED:
       case NotificationType.CAM_2C_SOMEONE_SPOTTED:

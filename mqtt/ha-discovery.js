@@ -9,6 +9,7 @@ class HaDiscovery {
 
     // Motion detected
     if ([
+      DeviceType.EUFYCAM_E,
       DeviceType.EUFYCAM_2_PRO,
       DeviceType.EUFYCAM_2C,
       DeviceType.EUFYCAM_2,
@@ -33,6 +34,7 @@ class HaDiscovery {
 
     // Thumbnail
     if ([
+      DeviceType.EUFYCAM_E,
       DeviceType.EUFYCAM_2_PRO,
       DeviceType.EUFYCAM_2C,
       DeviceType.EUFYCAM_2,

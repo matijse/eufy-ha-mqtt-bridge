@@ -1,5 +1,6 @@
 exports.DeviceType = {
   OTHER: 'UNKNOWN',
+  EUFYCAM_E: 'T8112',
   EUFYCAM_2: 'T8114',
   EUFYCAM_2_PRO: 'T8140',
   EUFYCAM_2C: 'T8113',
@@ -13,4 +14,4 @@ exports.DeviceType = {
   DOOR_SENSOR: 'T8900',
 }
 
-exports.supportedDevices = ['T8114', 'T8113', 'T8140', 'T8142', 'T8420', 'T8400', 'T8410', 'T8910', 'T8200', 'T8210', 'T8900']
+exports.supportedDevices = ['T8112', 'T8114', 'T8113', 'T8140', 'T8142', 'T8420', 'T8400', 'T8410', 'T8910', 'T8200', 'T8210', 'T8900']
