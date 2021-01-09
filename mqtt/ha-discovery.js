@@ -1,191 +1,162 @@
-const { DeviceType } = require('../enums/device_type')
+const { NotificationType } = require('../enums/notification_type');
+const { DeviceCapabilities } = require('../enums/device_type')
 
 class HaDiscovery {
 
   discoveryConfigs (device) {
     let configs = []
+    const deviceName = device.name
     const deviceType = device.type
     const deviceSN = device.id || device.station_sn
 
-    // Motion detected
-    if ([
-      DeviceType.EUFYCAM_E,
-      DeviceType.EUFYCAM_2_PRO,
-      DeviceType.EUFYCAM_2C,
-      DeviceType.EUFYCAM_2,
-      DeviceType.EUFYCAM_2C_PRO,
-      DeviceType.INDOOR_CAM,
-      DeviceType.INDOOR_CAM_PAN_TILT,
-      DeviceType.VIDEO_DOORBELL_2K_BATTERY,
-      DeviceType.VIDEO_DOORBELL_2K_POWERED,
-      DeviceType.FLOODLIGHT_CAMERA,
-      DeviceType.MOTION_SENSOR
-    ].includes(deviceType)) {
-      configs.push(this.motionDetectedConfiguration(device.name, deviceSN))
+    if (!DeviceCapabilities.hasOwnProperty(deviceType)) {
+      return []
     }
 
-    // Doorbell pressed
-    if ([
-      DeviceType.VIDEO_DOORBELL_2K_BATTERY,
-      DeviceType.VIDEO_DOORBELL_2K_POWERED
-    ].includes(deviceType)) {
-      configs.push(this.doorbellPressedConfiguration(device.name, deviceSN))
-    }
+    let capabilities = DeviceCapabilities[deviceType]
 
-    // Thumbnail
-    if ([
-      DeviceType.EUFYCAM_E,
-      DeviceType.EUFYCAM_2_PRO,
-      DeviceType.EUFYCAM_2C,
-      DeviceType.EUFYCAM_2,
-      DeviceType.EUFYCAM_2C_PRO,
-      DeviceType.INDOOR_CAM,
-      DeviceType.INDOOR_CAM_PAN_TILT,
-      DeviceType.VIDEO_DOORBELL_2K_BATTERY,
-      DeviceType.VIDEO_DOORBELL_2K_POWERED,
-      DeviceType.FLOODLIGHT_CAMERA
-    ].includes(deviceType)) {
-      configs.push(this.thumbnailConfiguration(device.name, deviceSN))
-    }
-
-    // Crying detected
-    if ([
-      DeviceType.INDOOR_CAM,
-      DeviceType.INDOOR_CAM_PAN_TILT,
-    ].includes(deviceType)) {
-      configs.push(this.cryingDetectedConfiguration(device.name, deviceSN))
-    }
-	
-    // Sound detected
-    if ([
-      DeviceType.INDOOR_CAM,
-      DeviceType.INDOOR_CAM_PAN_TILT,
-    ].includes(deviceType)) {
-      configs.push(this.soundDetectedConfiguration(device.name, deviceSN))
-    }
-
-    // Door sensor
-    if ([
-      DeviceType.DOOR_SENSOR,
-    ].includes(deviceType)) {
-      configs.push(this.doorSensorBaseTopic(device.name, deviceSN))
-    }
+    capabilities.forEach(capability => {
+      configs.push(this.configurationForCapability(capability, deviceName, deviceSN, deviceType))
+    })
 
     return configs
   }
 
-  motionDetectedConfiguration (deviceName, deviceSN) {
+  baseTopicForCapability (capability, deviceSN) {
+    switch (capability) {
+      case NotificationType.EVENT_MOTION_DETECTED:
+        return `homeassistant/binary_sensor/eufy/${deviceSN}_motion`
+      case NotificationType.EVENT_PERSON_DETECTED:
+        return `homeassistant/binary_sensor/eufy/${deviceSN}_person`
+      case NotificationType.EVENT_DOORBELL_PRESSED:
+        return `homeassistant/binary_sensor/eufy/${deviceSN}_doorbell`
+      case NotificationType.EVENT_CRYING_DETECTED:
+        return `homeassistant/binary_sensor/eufy/${deviceSN}_crying`
+      case NotificationType.EVENT_SOUND_DETECTED:
+        return `homeassistant/binary_sensor/eufy/${deviceSN}_sound`
+      case NotificationType.EVENT_PET_DETECTED:
+        return `homeassistant/binary_sensor/eufy/${deviceSN}_pet`
+      case NotificationType.DOOR_SENSOR_CHANGED:
+        return `homeassistant/binary_sensor/eufy/${deviceSN}_door`
+      case NotificationType.THUMBNAIL:
+        return `homeassistant/camera/eufy/${deviceSN}_thumbnail`
+    }
+  }
+
+  payloadForCapability (capability) {
+    switch (capability) {
+      case NotificationType.EVENT_CRYING_DETECTED:
+        return 'crying'
+      case NotificationType.EVENT_SOUND_DETECTED:
+        return 'sound'
+      default:
+        return 'motion'
+    }
+  }
+
+  configurationForCapability (capability, deviceName, deviceSN, deviceType) {
+    let sensorId, sensorName, sensorDeviceClass, sensorPayloadOff
+    let sensorBaseTopic = this.baseTopicForCapability(capability, deviceSN)
+    let sensorPayloadOn = this.payloadForCapability(capability)
+
+    switch (capability) {
+      case NotificationType.EVENT_MOTION_DETECTED:
+        sensorId = `${deviceSN}_motion`
+        sensorName = `${deviceName} - Motion detected`
+        sensorDeviceClass = 'motion'
+        break
+      case NotificationType.EVENT_PERSON_DETECTED:
+        sensorId = `${deviceSN}_person`
+        sensorName = `${deviceName} - Person detected`
+        sensorDeviceClass = 'motion'
+        break
+      case NotificationType.EVENT_DOORBELL_PRESSED:
+        sensorId = `${deviceSN}_doorbell`
+        sensorName = `${deviceName} - Doorbell pressed`
+        sensorDeviceClass = 'motion'
+        break
+      case NotificationType.EVENT_CRYING_DETECTED:
+        sensorId = `${deviceSN}_crying`
+        sensorName = `${deviceName} - Crying detected`
+        sensorDeviceClass = 'sound'
+        break
+      case NotificationType.EVENT_SOUND_DETECTED:
+        sensorId = `${deviceSN}_sound`
+        sensorName = `${deviceName} - Sound detected`
+        sensorDeviceClass = 'sound'
+        break
+      case NotificationType.EVENT_PET_DETECTED:
+        sensorId = `${deviceSN}_pet`
+        sensorName = `${deviceName} - Pet detected`
+        sensorDeviceClass = 'motion'
+        break
+      case NotificationType.DOOR_SENSOR_CHANGED:
+        sensorId = `${deviceSN}_door`
+        sensorName = `${deviceName}`
+        sensorDeviceClass = 'door'
+        sensorPayloadOn = 'open'
+        sensorPayloadOff = 'closed'
+        break
+      case NotificationType.THUMBNAIL:
+        sensorId = `${deviceSN}_thumbnail`
+        sensorName = `${deviceName} - Last event`
+        break
+    }
+
+    if (capability === NotificationType.DOOR_SENSOR_CHANGED) {
+      return {
+        topic: `${sensorBaseTopic}/config`,
+        message: JSON.stringify({
+          name: sensorName,
+          device_class: sensorDeviceClass,
+          state_topic: `${sensorBaseTopic}/state`,
+          json_attributes_topic: `${sensorBaseTopic}/attributes`,
+          payload_on: sensorPayloadOn,
+          payload_off: sensorPayloadOff,
+          unique_id: sensorId,
+          device: {
+            identifiers: deviceSN,
+            name: deviceName,
+            manufacturer: 'Eufy',
+            model: deviceType,
+          }
+        })
+      }
+    } else if (capability === NotificationType.THUMBNAIL) {
+      return {
+        topic: `${sensorBaseTopic}/config`,
+        message: JSON.stringify({
+          name: sensorName,
+          topic: `${sensorBaseTopic}`,
+          unique_id: sensorId,
+          device: {
+            identifiers: deviceSN,
+            name: deviceName,
+            manufacturer: 'Eufy',
+            model: deviceType,
+          }
+        })
+      }
+    }
+
     return {
-      topic: `homeassistant/binary_sensor/eufy/${deviceSN}_motion/config`,
+      topic: `${sensorBaseTopic}/config`,
       message: JSON.stringify({
-        name: `${deviceName} - Motion detected`,
-        device_class: 'motion',
-        state_topic: `${this.motionDetectedBaseTopic(deviceSN)}/state`,
-        json_attributes_topic: `${this.motionDetectedBaseTopic(deviceSN)}/attributes`,
-        payload_on: 'motion',
-        payload_off: 'clear',
+        name: sensorName,
+        device_class: sensorDeviceClass,
+        state_topic: `${sensorBaseTopic}/state`,
+        json_attributes_topic: `${sensorBaseTopic}/attributes`,
+        payload_on: sensorPayloadOn,
         off_delay: 5,
-        unique_id: `${deviceSN}_motion`
+        unique_id: sensorId,
+        device: {
+          identifiers: deviceSN,
+          name: deviceName,
+          manufacturer: 'Eufy',
+          model: deviceType,
+        }
       })
     }
-  }
-
-  doorbellPressedConfiguration (deviceName, deviceSN) {
-    return {
-      topic: `homeassistant/binary_sensor/eufy/${deviceSN}_doorbell/config`,
-      message: JSON.stringify({
-        name: `${deviceName} - Doorbell pressed`,
-        device_class: 'motion',
-        state_topic: `${this.doorbellPressedBaseTopic(deviceSN)}/state`,
-        json_attributes_topic: `${this.doorbellPressedBaseTopic(deviceSN)}/attributes`,
-        payload_on: 'motion',
-        payload_off: 'clear',
-        off_delay: 5,
-        unique_id: `${deviceSN}_doorbell`
-      })
-    }
-  }
-
-  cryingDetectedConfiguration (deviceName, deviceSN) {
-    return {
-      topic: `homeassistant/binary_sensor/eufy/${deviceSN}_crying/config`,
-      message: JSON.stringify({
-        name: `${deviceName} - Crying detected`,
-        device_class: 'sound',
-        state_topic: `${this.cryingDetectedBaseTopic(deviceSN)}/state`,
-        json_attributes_topic: `${this.cryingDetectedBaseTopic(deviceSN)}/attributes`,
-        payload_on: 'crying',
-        payload_off: 'clear',
-        off_delay: 5,
-        unique_id: `${deviceSN}_crying`
-      })
-    }
-  }
-  
-  soundDetectedConfiguration (deviceName, deviceSN) {
-    return {
-      topic: `homeassistant/binary_sensor/eufy/${deviceSN}_sound/config`,
-      message: JSON.stringify({
-        name: `${deviceName} - Sound detected`,
-        device_class: 'sound',
-        state_topic: `${this.soundDetectedBaseTopic(deviceSN)}/state`,
-        json_attributes_topic: `${this.soundDetectedBaseTopic(deviceSN)}/attributes`,
-        payload_on: 'sound',
-        payload_off: 'clear',
-        off_delay: 5,
-        unique_id: `${deviceSN}_sound`
-      })
-    }
-  }
-
-  thumbnailConfiguration (deviceName, deviceSN) {
-    return {
-      topic: `homeassistant/camera/eufy/${deviceSN}_thumbnail/config`,
-      message: JSON.stringify({
-        name: `${deviceName} - Last event`,
-        topic: `${this.thumbnailTopic(deviceSN)}`,
-        unique_id: `${deviceSN}_thumbnail`
-      })
-    }
-  }
-
-  doorSensorConfiguration (deviceName, deviceSN) {
-    return {
-      topic: `homeassistant/binary_sensor/eufy/${deviceSN}_door/config`,
-      message: JSON.stringify({
-        name: `${deviceName}`,
-        device_class: 'door',
-        state_topic: `${this.doorSensorBaseTopic(deviceSN)}/state`,
-        json_attributes_topic: `${this.doorSensorBaseTopic(deviceSN)}/attributes`,
-        payload_on: 'open',
-        payload_off: 'closed',
-        unique_id: `${deviceSN}_door`
-      })
-    }
-  }
-
-  motionDetectedBaseTopic (device_sn) {
-    return `homeassistant/binary_sensor/eufy/${device_sn}_motion`
-  }
-
-  doorbellPressedBaseTopic (device_sn) {
-    return `homeassistant/binary_sensor/eufy/${device_sn}_doorbell`
-  }
-
-  cryingDetectedBaseTopic (device_sn) {
-    return `homeassistant/binary_sensor/eufy/${device_sn}_crying`
-  }
-
-  soundDetectedBaseTopic (device_sn) {
-    return `homeassistant/binary_sensor/eufy/${device_sn}_sound`
-  }
-
-  doorSensorBaseTopic (device_sn) {
-    return `homeassistant/binary_sensor/eufy/${device_sn}_door`
-  }
-
-  thumbnailTopic (device_sn) {
-    return `homeassistant/camera/eufy/${device_sn}_thumbnail`
   }
 }
 

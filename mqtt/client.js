@@ -4,7 +4,7 @@ const fetch = require('node-fetch')
 const winston = require('winston')
 const DB = require('../db')
 const config = require('../config')
-const NotificationType = require('../enums/notification_type')
+const { NotificationType, NotificationTypeByString, supportedNotificationTypes, supportedNotificationStrings } = require('../enums/notification_type')
 const HaDiscovery = require('./ha-discovery')
 
 class MqttClient {
@@ -56,200 +56,106 @@ class MqttClient {
     }
   }
 
-  async sendMotionDetectedEvent (device_sn, attributes) {
-    await this.client.publish(`${HaDiscovery.motionDetectedBaseTopic(device_sn)}/state`, 'motion')
-    await this.client.publish(`${HaDiscovery.motionDetectedBaseTopic(device_sn)}/attributes`, JSON.stringify(attributes))
-  }
-
-  async sendDoorbellPressedEvent (device_sn, attributes) {
-    await this.client.publish(`${HaDiscovery.doorbellPressedBaseTopic(device_sn)}/state`, 'motion')
-    await this.client.publish(`${HaDiscovery.doorbellPressedBaseTopic(device_sn)}/attributes`, JSON.stringify(attributes))
-  }
-
-  async sendCryingDetectedEvent (device_sn, attributes) {
-    await this.client.publish(`${HaDiscovery.cryingDetectedBaseTopic(device_sn)}/state`, 'crying')
-    await this.client.publish(`${HaDiscovery.cryingDetectedBaseTopic(device_sn)}/attributes`, JSON.stringify(attributes))
-  }
-  
-  async sendSoundDetectedEvent (device_sn, attributes) {
-	  await this.client.publish(`${HaDiscovery.soundDetectedBaseTopic(device_sn)}/state`, 'sound')
-    await this.client.publish(`${HaDiscovery.soundDetectedBaseTopic(device_sn)}/attributes`, JSON.stringify(attributes))
-  }
-
-  async sendDoorChangedEvent (device_sn, attributes) {
-    await this.client.publish(`${HaDiscovery.doorSensorBaseTopic(device_sn)}/state`, attributes.door)
-    await this.client.publish(`${HaDiscovery.doorSensorBaseTopic(device_sn)}/attributes`, JSON.stringify(attributes))
-  }
-
   async processPushNotification (notification) {
-    let type = parseInt(get(notification, 'payload.payload.event_type', { default: 0 }))
-    if (type === 0) {
-      type = parseInt(get(notification, 'payload.type', { default: 0 }))
-    }
-    if (type === 0) {
-      let doorbellPayload = get(notification, 'payload.doorbell')
-      // Doorbell (T8200) payload is a string; Parse to JSON and save in notification for later use.
-      if (doorbellPayload) {
-        try {
-          let parsed = JSON.parse(doorbellPayload)
-          notification.payload.doorbell = parsed
-          type = parseInt(get(parsed, 'event_type', { default: 0 }))
-        } catch (e) {
-          winston.debug(`Error parsing doorbell payload`, e)
-        }
+    // Special case for Doorbell (T8200), payload is a string; Parse to JSON and save in notification for later use.
+    let doorbellPayload = get(notification, 'payload.doorbell', { default: false })
+    if (doorbellPayload) {
+      try {
+        notification.payload.doorbell = JSON.parse(doorbellPayload)
+        notification.payload.payload = notification.payload.doorbell
+      } catch (e) {
+        winston.debug(`Error parsing doorbell payload`, e)
       }
     }
 
-    winston.debug(`Got Push Notification of type ${type}`)
-
-    switch (type) {
-      case NotificationType.EVENT_DOORBELL_PRESSED:
-        await this.doorbellEvent(notification)
-        break
-	    case NotificationType.EVENT_MOTION_DETECTED:
-	    case NotificationType.EVENT_SOMEONE_SPOTTED:
-      case NotificationType.CAM_E_MOTION_DETECTED:
-      case NotificationType.CAM_SOMEONE_SPOTTED:
-      case NotificationType.CAM_2_SOMEONE_SPOTTED:
-      case NotificationType.CAM_2C_SOMEONE_SPOTTED:
-      case NotificationType.CAM_2C_PRO_MOTION_DETECTED:
-      case NotificationType.FLOODLIGHT_MOTION_DETECTED:
-      case NotificationType.MOTION_SENSOR_TRIGGERED:
-        await this.motionDetectedEvent(notification)
-        break
-      case NotificationType.EVENT_CRYING_DETECTED:
-        await this.cryingDetectedEvent(notification)
-        break
-	    case NotificationType.EVENT_SOUND_DETECTED:
-	      await this.soundDetectedEvent(notification)
-		    break
-      case NotificationType.DOOR_SENSOR_CHANGED:
-        await this.doorSensorChanged(notification)
-        break
-    }
-  }
-
-  async doorbellEvent (event) {
-    let device_sn = this.getDeviceSNFromEvent(event)
-    if (!device_sn) {
-      winston.warn(`Got doorbellEvent with unknown device_sn`, {event})
+    let notificationType = this.getNotificationType(notification)
+    if (notificationType === 'unknown') {
       return
     }
 
-    const attributes = this.getAttributesFromEvent(event)
-
-    try {
-      await this.sendDoorbellPressedEvent(device_sn, attributes)
-    } catch (e) {
-      winston.error(`Failure in doorbellEvent`, { exception: e })
-    }
-
-    if (attributes.thumbnail) {
-      await this.uploadThumbnail(device_sn, attributes.thumbnail)
-    }
-  }
-
-  async motionDetectedEvent (event) {
-    let device_sn = this.getDeviceSNFromEvent(event)
-    if (!device_sn) {
-      winston.warn(`Got motionDetectedEvent with unknown device_sn`, { event })
+    let deviceSN = this.getDeviceSNFromNotification(notification)
+    if (!deviceSN) {
+      winston.warn(`Got notification with unknown device_sn`, { notification })
       return
     }
 
-    const attributes = this.getAttributesFromEvent(event)
+    const attributes = this.getAttributesFromNotification(notification)
 
-    try {
-      await this.sendMotionDetectedEvent(device_sn, attributes)
-    } catch (e) {
-      winston.error(`Failure in motionDetectedEvent`, { exception: e })
+    winston.debug(`Got notification - Device: ${deviceSN}, Type: ${notificationType}`)
+
+    if (notificationType === NotificationType.DOOR_SENSOR_CHANGED) {
+      await this.doorSensorChanged(notification, deviceSN, attributes)
+    } else {
+      await this.sendNotification(notificationType, deviceSN, attributes)
     }
 
-    if (attributes.thumbnail) {
-      await this.uploadThumbnail(device_sn, attributes.thumbnail)
-    }
-  }
-
-  async soundDetectedEvent (event) {
-    let device_sn = this.getDeviceSNFromEvent(event)
-    if (!device_sn) {
-      winston.warn(`Got soundDetectedEvent with unknown device_sn`, { event })
-      return
-    }
-
-    const attributes = this.getAttributesFromEvent(event)
-
-    try {
-      await this.sendSoundDetectedEvent(device_sn, attributes)
-    } catch (e) {
-      winston.error(`Failure in soundDetectedEvent`, { exception: e })
-    }
-
-    if (attributes.thumbnail) {
-      await this.uploadThumbnail(device_sn, attributes.thumbnail)
+    if (attributes.hasOwnProperty('thumbnail') && attributes.thumbnail.length > 0) {
+      await this.uploadThumbnail(deviceSN, attributes.thumbnail)
     }
   }
 
-  async cryingDetectedEvent(event) {
-    let device_sn = this.getDeviceSNFromEvent(event)
-    if (!device_sn) {
-      winston.warn(`Got cryingDetectedEvent with unknown device_sn`, { event })
-      return
-    }
-
-    const attributes = this.getAttributesFromEvent(event)
-
-    try {
-      await this.sendCryingDetectedEvent(device_sn, attributes)
-    } catch (e) {
-      winston.error(`Failure in cryingDetectedEvent`, { exception: e })
-    }
-
-    if (attributes.thumbnail) {
-      await this.uploadThumbnail(device_sn, attributes.thumbnail)
-    }
+  async sendNotification (notificationType, deviceSN, attributes) {
+    const baseTopic = HaDiscovery.baseTopicForCapability(notificationType, deviceSN)
+    await this.client.publish(`${baseTopic}/state`, HaDiscovery.payloadForCapability(notificationType))
+    await this.client.publish(`${baseTopic}/attributes`, JSON.stringify(attributes))
   }
 
-  async uploadThumbnail(device_sn, thumbnail_url) {
-    winston.debug(`Uploading new thumbnail for ${device_sn} from ${thumbnail_url}`)
-    const response = await fetch(thumbnail_url)
+  async uploadThumbnail(deviceSN, thumbnailUrl) {
+    winston.debug(`Uploading new thumbnail for ${deviceSN} from ${thumbnailUrl}`)
+    const response = await fetch(thumbnailUrl)
     const image = await response.buffer()
 
-    const topic = HaDiscovery.thumbnailTopic(device_sn)
+    const topic = HaDiscovery.baseTopicForCapability(NotificationType.THUMBNAIL, deviceSN)
 
     await this.client.publish(topic, image)
   }
 
-  async doorSensorChanged(event) {
-    let device_sn = this.getDeviceSNFromEvent(event)
-    if (!device_sn) {
-      winston.warn(`Got doorSensorChanged with unknown device_sn`, { event })
-      return
-    }
-
-    let attributes = this.getAttributesFromEvent(event)
-
-    let doorState = get(event, 'payload.payload.e', { default: false })
+  async doorSensorChanged(notification, deviceSN, attributes) {
+    let doorState = get(notification, 'payload.payload.e', { default: false })
     if (doorState === false) {
-      winston.warn(`Got doorSensorChanged with unknown doorState`, { event })
+      winston.warn(`Got doorSensorChanged with unknown doorState`, { notification })
       return
     }
     attributes.door = parseInt(doorState) === 1 ? 'open' : 'closed'
 
+    let baseTopic = HaDiscovery.baseTopicForCapability(NotificationType.DOOR_SENSOR_CHANGED, deviceSN)
+
     try {
-      await this.sendDoorChangedEvent(device_sn, attributes)
+      await this.client.publish(`${baseTopic}/state`, attributes.door)
+      await this.client.publish(`${baseTopic}/attributes`, JSON.stringify(attributes))
     } catch (e) {
       winston.error(`Failure in doorSensorChanged`, { exception: e })
     }
   }
 
-  getDeviceSNFromEvent (event) {
-    let device_sn = get(event, 'payload.device_sn')
+  getNotificationType (notification) {
+    // Notification based on event_type (3101, 3102, etc)
+    let type = parseInt(get(notification, 'payload.payload.event_type', { default: 0 }))
+    if (supportedNotificationTypes.includes(type)) {
+      return type
+    }
+
+    // Notification based on content title
+    let content = get(notification, 'payload.content', { default: '' })
+
+    for (let str of supportedNotificationStrings) {
+      if (content.includes(str)) {
+        return NotificationTypeByString[str]
+      }
+    }
+
+    winston.debug('Notification with unknown type', notification)
+    return 'unknown'
+  }
+
+  getDeviceSNFromNotification (notification) {
+    let device_sn = get(notification, 'payload.device_sn')
     if (!device_sn) {
-      device_sn = get(event, 'payload.payload.device_sn')
+      device_sn = get(notification, 'payload.payload.device_sn')
       if (!device_sn) {
-        device_sn = get(event, 'payload.doorbell.device_sn')
+        device_sn = get(notification, 'payload.doorbell.device_sn')
         if (!device_sn) {
-          device_sn = get(event, 'payload.station_sn')
+          device_sn = get(notification, 'payload.station_sn')
         }
       }
     }
@@ -257,17 +163,17 @@ class MqttClient {
     return device_sn
   }
 
-  getAttributesFromEvent (event) {
+  getAttributesFromNotification (notification) {
     const attributes = {
-      event_time: get(event, 'payload.event_time'),
-      thumbnail: get(event, 'payload.payload.pic_url')
+      event_time: get(notification, 'payload.event_time'),
+      thumbnail: get(notification, 'payload.payload.pic_url')
     }
 
     if (!attributes.event_time) {
-      attributes.event_time = get(event, 'payload.doorbell.event_time')
+      attributes.event_time = get(notification, 'payload.doorbell.event_time')
     }
     if (!attributes.thumbnail) {
-      attributes.thumbnail = get(event, 'payload.doorbell.pic_url')
+      attributes.thumbnail = get(notification, 'payload.doorbell.pic_url')
     }
 
     return attributes
