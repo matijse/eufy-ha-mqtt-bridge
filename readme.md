@@ -1,62 +1,50 @@
 # Eufy Home Assistant MQTT Bridge
 
-(Early version) 
-
-This script subscribes to push notifications of the Eufy Security app and publishes Motion and Doorbell pressed events
-via MQTT to Home Assistant. When using auto discovery, it automatically creates binary sensors for Motion and
-Doorbell pressed events. 
+This script subscribes to push notifications of the Eufy Security app and publishes events via MQTT to Home Assistant.
+When using auto discovery, it automatically creates a device with sensors within Home Assistant. 
 
 Uses the [eufy-node-client](https://github.com/JanLoebel/eufy-node-client) by JanLoebel and is heavily inspired on 
 its examples.
 
+## Create a second Eufy account!
+
+At the moment it is not possible to use an account with 2FA enabled. You should not use the same account here and in the
+app, because when you log in at one app, sometimes you get logged out on other locations. I recommend creating a second 
+account (with a strong random generated password and no 2FA) and invite it to your Eufy account. 
+
+When you receive "Failed to request" errors when starting this script, you have logged in too many times and are 
+temporarily blocked. Wait a day and you'll be able to log in again.
+
+## Home Assistant Core vs Home Assistant Add-on
+
+This repo describes running via Docker alongside Home Assistant Core. See [below](#run-as-home-assistant-add-on) 
+for an option to run it as an Add-on.
+
 ## Supported devices
 
-* Eufy Cam 2 (T8114)
-* Eufy Cam 2 Pro (T8140)
-* Eufy Cam 2 C (T8113)
-* Eufy Cam 2 C Pro (T8140)
-* Eufy video doorbell 2K (powered) (T8200)
-* Eufy video doorbell 2K (battery) (T8210)
-* Floodlight Camera (T8420)
-* Indoor Cam (T8400)
-* Motion Sensor (T8910)
-* Door Sensor (T8900)
+The following devices and features are supported. When a device of that type is detected, the sensors that are supported
+are automatically discovered in Home Assistant.
+
+|   | Motion detected | Person detected | Doorbell press | Crying detected | Sound detected | Pet detected | Thumbnail last event |
+|--|--|--|--|--|--|--|--|
+| Eufy Cam 2 (T8114) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: |
+| Eufy Cam 2 Pro (T8140) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: |
+| Eufy Cam 2C (T8113) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: |
+| Eufy Cam 2C Pro (T8142) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: |
+| Eufy Cam E (T8112) | :heavy_check_mark: | :x: | :x: | :x: | :x: | :x: | :heavy_check_mark: |
+| Floodlight Camera (T8420) | :heavy_check_mark: | :x: | :x: | :x: | :x: | :x: | :heavy_check_mark: |
+| Indoor Cam 2K (T8400) | :heavy_check_mark: | :heavy_check_mark: | :x: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+| Indoor Cam Pan & Tilt (T8410) | :heavy_check_mark: | :heavy_check_mark: | :x: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+| Motion Sensor (T8910) | :heavy_check_mark: | :x: | :x: | :x: | :x: | :x: | :x: |
+| Eufy video doorbell 1080P (battery) (T8220) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: |
+| Eufy video doorbell 1080P (powered) (T8221) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: |
+| Eufy video doorbell 2K (battery) (T8210) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: |
+| Eufy video doorbell 2K (powered) (T8200 / T8202) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: |
+
+Also, the Door Sensor (T8900) is supported, this generates a seperate sensor, based on door open/closed events.
 
 All push messages from all devices are logged, click [here](https://github.com/matijse/eufy-ha-mqtt-bridge/issues/7) to
-help with adding support for new devices.
-
-## Features
-
-The following sensors are automatically added to Home Assistant via MQTT discovery:
-
-* Motion detected (binary sensor)
-    * Eufy Cam 2 (T8114)
-    * Eufy Cam 2 Pro (T8140)
-    * Eufy Cam 2 C (T8113)
-    * Eufy Cam 2 C Pro (T8140)
-    * Eufy video doorbell 2K (powered) (T8200)
-    * Eufy video doorbell 2K (battery) (T8210)
-    * Floodlight Camera (T8420)
-    * Indoor Cam (T8400)
-    * Motion Sensor (T8910)
-* Crying detected (binary sensor)
-    * Indoor Cam (T8400)
-* Doorbell button pressed (binary sensor)
-    * Eufy video doorbell 2K (powered) (T8200)
-    * Eufy video doorbell 2K (battery) (T8210)
-* Door sensor (binary sensor)
-    * Door Sensor (T8900)
-* Thumbnail of Last event (camera sensor)
-    * Eufy Cam 2 (T8114)
-    * Eufy Cam 2 Pro (T8140)
-    * Eufy Cam 2 C (T8113)
-    * Eufy Cam 2 C Pro (T8140)
-    * Eufy video doorbell 2K (powered) (T8200)
-    * Eufy video doorbell 2K (battery) (T8210)
-    * Floodlight Camera (T8420)
-    * Indoor Cam (T8400)
-    
-These can be used to trigger automations based on motion / button pressed.
+help with adding support for new devices or message types that aren't supported yet.
 
 ## Setup 
 
@@ -83,10 +71,6 @@ mqtt:
   username: "user"
   password: "password"
 ```
-
-At the moment it is not possible to use an account with 2FA enabled. If you use the same credentials on the app, you 
-might be logged out here when you login in the app, so I recommend creating a second account (with a strong random 
-generated password and no 2FA) and invite it to your Eufy account.
 
 ### Run via Docker
 
@@ -121,7 +105,7 @@ To run directly via npm:
 1. Clone this repository
 1. Create a `config.yml` file in the `data` folder, for contents see above.
 1. Run `npm install`
-1. Run `npm run start`
+1. Run `npm run start` or `npm run dev` to see debug output.
 
 ### Run as Home Assistant Add-on
 
