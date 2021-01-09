@@ -14,7 +14,7 @@ class HaDiscovery {
       DeviceType.EUFYCAM_2,
       DeviceType.EUFYCAM_2C_PRO,
       DeviceType.INDOOR_CAM,
-	    DeviceType.INDOOR_CAM_PAN_TILT,
+      DeviceType.INDOOR_CAM_PAN_TILT,
       DeviceType.VIDEO_DOORBELL_2K_BATTERY,
       DeviceType.VIDEO_DOORBELL_2K_POWERED,
       DeviceType.FLOODLIGHT_CAMERA,
@@ -38,6 +38,7 @@ class HaDiscovery {
       DeviceType.EUFYCAM_2,
       DeviceType.EUFYCAM_2C_PRO,
       DeviceType.INDOOR_CAM,
+      DeviceType.INDOOR_CAM_PAN_TILT,
       DeviceType.VIDEO_DOORBELL_2K_BATTERY,
       DeviceType.VIDEO_DOORBELL_2K_POWERED,
       DeviceType.FLOODLIGHT_CAMERA
@@ -48,6 +49,7 @@ class HaDiscovery {
     // Crying detected
     if ([
       DeviceType.INDOOR_CAM,
+      DeviceType.INDOOR_CAM_PAN_TILT,
     ].includes(deviceType)) {
       configs.push(this.cryingDetectedConfiguration(device.name, deviceSN))
     }
@@ -55,6 +57,7 @@ class HaDiscovery {
     // Sound detected
     if ([
       DeviceType.INDOOR_CAM,
+      DeviceType.INDOOR_CAM_PAN_TILT,
     ].includes(deviceType)) {
       configs.push(this.soundDetectedConfiguration(device.name, deviceSN))
     }
