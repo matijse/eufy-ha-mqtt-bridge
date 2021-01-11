@@ -89,7 +89,7 @@ class MqttClient {
       await this.sendNotification(notificationType, deviceSN, attributes)
     }
 
-    if (attributes.hasOwnProperty('thumbnail') && attributes.thumbnail.length > 0) {
+    if (attributes.thumbnail && attributes.thumbnail.length > 0) {
       await this.uploadThumbnail(deviceSN, attributes.thumbnail)
     }
   }
