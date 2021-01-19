@@ -19,8 +19,15 @@ const notificationTypeByString = {
   'Trigger is close': 100001,
 }
 
+const notificationTypeByPushType = {
+  '2': 100001 // Door sensor message content is not always in English
+}
+
 exports.NotificationType = notificationType
 exports.supportedNotificationTypes = Object.values(notificationType)
 
 exports.NotificationTypeByString = notificationTypeByString
 exports.supportedNotificationStrings = Object.keys(notificationTypeByString)
+
+exports.NotificationTypeByPushType = notificationTypeByPushType
+exports.supportedNotificationPushTypes = Object.keys(notificationTypeByPushType).map(type => parseInt(type))

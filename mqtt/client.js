@@ -4,7 +4,8 @@ const fetch = require('node-fetch')
 const winston = require('winston')
 const DB = require('../db')
 const config = require('../config')
-const { NotificationType, NotificationTypeByString, supportedNotificationTypes, supportedNotificationStrings } = require('../enums/notification_type')
+const { NotificationType, NotificationTypeByString, NotificationTypeByPushType,
+  supportedNotificationTypes, supportedNotificationStrings, supportedNotificationPushTypes } = require('../enums/notification_type')
 const HaDiscovery = require('./ha-discovery')
 
 class MqttClient {
@@ -142,6 +143,12 @@ class MqttClient {
       if (content.includes(str)) {
         return NotificationTypeByString[str]
       }
+    }
+
+    // Notification based on PushType
+    type = parseInt(get(notification, 'type', { default: 0}))
+    if (supportedNotificationPushTypes.includes(type)) {
+      return NotificationTypeByPushType[type]
     }
 
     winston.debug('Notification with unknown type', notification)
