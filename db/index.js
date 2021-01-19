@@ -36,13 +36,24 @@ class DB {
     if (type === 0) {
       type = parseInt(get(push, 'payload.type', { default: 0 }))
     }
-    this.db.run('INSERT INTO push_payloads (id, station_sn, device_sn, type, payload) VALUES (?, ?, ?, ?, ?)', [
-      id,
-      station_sn,
-      device_sn,
-      type,
-      JSON.stringify(push)
-    ])
+
+    return new Promise((resolve, reject) => {
+      this.db.run('INSERT INTO push_payloads (id, station_sn, device_sn, type, payload) VALUES (?, ?, ?, ?, ?)',
+        [
+          id,
+          station_sn,
+          device_sn,
+          type,
+          JSON.stringify(push)
+        ],
+        (error) => {
+          if (error !== null) {
+            reject(error)
+          } else {
+            resolve()
+          }
+        })
+    })
   }
 
   getDevice (id) {
@@ -69,7 +80,7 @@ class DB {
     })
   }
 
-  async createOrUpdateDevice (device) {
+  createOrUpdateDevice (device) {
     const id = get(device, 'device_sn', { default: null })
     if (id === null) {
       throw new Error('Cannot get device_sn')
@@ -79,12 +90,22 @@ class DB {
     const name = get(device, 'device_name', { default: null })
     const type = get(device, 'device_model', { default: null })
 
-    await this.db.run('INSERT OR REPLACE INTO devices (id, station_sn, name, type) VALUES (?, ?, ?, ?)', [
-      id,
-      station_sn,
-      name,
-      type
-    ])
+    return new Promise((resolve, reject) => {
+      this.db.run('INSERT OR REPLACE INTO devices (id, station_sn, name, type) VALUES (?, ?, ?, ?)',
+        [
+          id,
+          station_sn,
+          name,
+          type
+        ],
+        (error) => {
+          if (error !== null) {
+            reject(error)
+          } else {
+            resolve()
+          }
+        })
+    })
   }
 }
 

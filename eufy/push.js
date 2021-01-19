@@ -42,15 +42,15 @@ class EufyPush {
       androidId: this.pushCredentials.checkinResponse.androidId,
       securityToken: this.pushCredentials.checkinResponse.securityToken,
     });
-    pushClient.connect((msg) => {
+    pushClient.connect(async (msg) => {
       try {
-        DB.storePush(msg)
+        await DB.storePush(msg)
       } catch (e) {
         winston.warn(`Could not store push message`, { exception: e })
       }
 
       winston.debug(`Received push message`, { pushMessage: msg });
-      this.mqttClient.processPushNotification(msg)
+      await this.mqttClient.processPushNotification(msg)
     });
   }
 
