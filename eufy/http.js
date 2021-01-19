@@ -9,9 +9,19 @@ class EufyHttp {
     this.httpService = new HttpService(username, password)
   }
 
+  async getDevices () {
+    if (this.devices) {
+      return this.devices
+    }
+
+    this.devices = await this.httpService.listDevices()
+    winston.silly(`Device list: `, this.devices)
+
+    return this.devices
+  }
+
   async refreshDevices () {
-    const devices = await this.httpService.listDevices()
-    winston.silly(`Device list: `, devices)
+    const devices = await this.getDevices()
     for (let device of devices) {
       await DB.createOrUpdateDevice(device)
       const deviceType = get(device, 'device_model', { default: null })

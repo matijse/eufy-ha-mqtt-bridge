@@ -1,4 +1,5 @@
 const { NotificationType } = require('../enums/notification_type');
+const { SensorType } = require('../enums/sensor_type');
 const { DeviceCapabilities } = require('../enums/device_type')
 
 class HaDiscovery {
@@ -40,6 +41,8 @@ class HaDiscovery {
         return `homeassistant/binary_sensor/eufy/${deviceSN}_door`
       case NotificationType.THUMBNAIL:
         return `homeassistant/camera/eufy/${deviceSN}_thumbnail`
+      case SensorType.BATTERY_PERCENTAGE:
+        return `homeassistant/sensor/eufy/${deviceSN}_battery`
     }
   }
 
@@ -101,6 +104,10 @@ class HaDiscovery {
         sensorId = `${deviceSN}_thumbnail`
         sensorName = `${deviceName} - Last event`
         break
+      case SensorType.BATTERY_PERCENTAGE:
+        sensorId = `${deviceSN}_battery`
+        sensorName = `${deviceName} - Battery percentage`
+        sensorDeviceClass = 'battery'
     }
 
     if (capability === NotificationType.DOOR_SENSOR_CHANGED) {
@@ -128,6 +135,23 @@ class HaDiscovery {
         message: JSON.stringify({
           name: sensorName,
           topic: `${sensorBaseTopic}`,
+          unique_id: sensorId,
+          device: {
+            identifiers: deviceSN,
+            name: deviceName,
+            manufacturer: 'Eufy',
+            model: deviceType,
+          }
+        })
+      }
+    } else if (capability === SensorType.BATTERY_PERCENTAGE) {
+      return {
+        topic: `${sensorBaseTopic}/config`,
+        message: JSON.stringify({
+          name: sensorName,
+          device_class: sensorDeviceClass,
+          state_topic: `${sensorBaseTopic}/state`,
+          unit_of_measurement: '%',
           unique_id: sensorId,
           device: {
             identifiers: deviceSN,

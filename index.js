@@ -20,7 +20,7 @@ winston.add(new winston.transports.Console({
   format: winston.format.simple(),
 }));
 
-const { EufyClient } = require('./eufy')
+const { EufyClient } = require('./eufy/client')
 
 const eufyClient = new EufyClient()
 eufyClient.init()

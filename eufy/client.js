@@ -1,6 +1,6 @@
 const config = require('../config')
 const { MqttClient } = require('../mqtt')
-const { EufyHttp, EufyPush } = require('../eufy')
+const { EufyHttp, EufyPush, EufyDevices } = require('../eufy')
 
 class EufyClient {
 
@@ -8,6 +8,7 @@ class EufyClient {
     this.mqttClient = new MqttClient()
     this.eufyHttpClient = new EufyHttp(config.eufyUsername, config.eufyPassword)
     this.eufyPush = new EufyPush(this.mqttClient)
+    this.eufyDevices = new EufyDevices(this.eufyHttpClient, this.mqttClient)
 
     await this.mqttClient.connect()
     await this.eufyHttpClient.refreshDevices()
@@ -16,6 +17,7 @@ class EufyClient {
     await this.eufyPush.startPushClient()
     const fcmToken = this.eufyPush.getFcmToken()
     await this.eufyHttpClient.registerPushToken(fcmToken)
+    await this.eufyDevices.processDeviceProperties()
     //
     // setInterval(async () => {
     //   console.log('checking push token')
@@ -24,4 +26,4 @@ class EufyClient {
   }
 }
 
-module.exports = EufyClient
+exports.EufyClient = EufyClient

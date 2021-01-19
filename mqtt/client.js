@@ -2,10 +2,12 @@ const MQTT = require('async-mqtt')
 const get = require('get-value')
 const fetch = require('node-fetch')
 const winston = require('winston')
+const { sleep } = require('eufy-node-client')
 const DB = require('../db')
 const config = require('../config')
 const { NotificationType, NotificationTypeByString, NotificationTypeByPushType,
   supportedNotificationTypes, supportedNotificationStrings, supportedNotificationPushTypes } = require('../enums/notification_type')
+const { SensorType } = require('../enums/sensor_type')
 const HaDiscovery = require('./ha-discovery')
 
 class MqttClient {
@@ -55,6 +57,8 @@ class MqttClient {
         await this.client.publish(config.topic, config.message)
       }
     }
+    // Give Home Assistant some time to setup all sensors
+    await sleep(5 * 1000)
   }
 
   async processPushNotification (notification) {
@@ -109,6 +113,13 @@ class MqttClient {
     const topic = HaDiscovery.baseTopicForCapability(NotificationType.THUMBNAIL, deviceSN)
 
     await this.client.publish(topic, image)
+  }
+
+  async publishBatteryPercentage(deviceSN, percentage) {
+    winston.debug(`Publishing battery percentage ${percentage}% for ${deviceSN}`)
+    const topic = `${HaDiscovery.baseTopicForCapability(SensorType.BATTERY_PERCENTAGE, deviceSN)}/state`
+
+    await this.client.publish(topic, percentage.toString())
   }
 
   async doorSensorChanged(notification, deviceSN, attributes) {
