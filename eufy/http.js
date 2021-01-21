@@ -23,7 +23,7 @@ class EufyHttp {
       return this.devices
     }
 
-    winston.info('Refreshing devices...')
+    winston.debug('Refreshing devices...')
 
     this.devices = await this.httpService.listDevices()
     this.devicesRefreshedAt = new Date().getTime()
