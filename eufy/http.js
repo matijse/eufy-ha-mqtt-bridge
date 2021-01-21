@@ -9,18 +9,30 @@ class EufyHttp {
     this.httpService = new HttpService(username, password)
   }
 
+  deviceListUpToDate () {
+    if (!this.devicesRefreshedAt) {
+      return false
+    }
+
+    const now = new Date().getTime()
+    return (now - this.devicesRefreshedAt) < (15 * 60 * 1000)
+  }
+
   async getDevices () {
-    if (this.devices) {
+    if (this.devices && this.deviceListUpToDate()) {
       return this.devices
     }
 
+    winston.info('Refreshing devices...')
+
     this.devices = await this.httpService.listDevices()
+    this.devicesRefreshedAt = new Date().getTime()
     winston.silly(`Device list: `, this.devices)
 
     return this.devices
   }
 
-  async refreshDevices () {
+  async refreshStoredDevices () {
     const devices = await this.getDevices()
     for (let device of devices) {
       await DB.createOrUpdateDevice(device)

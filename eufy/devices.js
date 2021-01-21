@@ -7,10 +7,16 @@ class EufyDevices {
     this.mqtt = mqttClient
   }
 
-  async processDeviceProperties () {
+  async retrieveDeviceThumbnails () {
     const devices = await this.http.getDevices()
     for (let device of devices) {
       await this.processDeviceThumbnail(device)
+    }
+  }
+
+  async processDeviceProperties () {
+    const devices = await this.http.getDevices()
+    for (let device of devices) {
       await this.processDeviceBatteryStatus(device)
     }
   }
