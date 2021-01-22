@@ -12,6 +12,8 @@ const HaDiscovery = require('./ha-discovery')
 
 class MqttClient {
 
+  onMqttMessage = null
+
   async connect() {
     this.client = await MQTT.connectAsync(config.mqttUrl, {
       username: config.mqttUsername,
@@ -33,11 +35,8 @@ class MqttClient {
     })
 
     this.client.on('message', async (topic, message) => {
-      winston.debug(`MQTT message: [${topic}]: ${message.toString()}`)
-      if (topic === 'homeassistant/status') {
-        if (message.toString() === 'online') {
-          await this.setupAutoDiscovery()
-        }
+      if (typeof this.onMqttMessage === 'function') {
+        await this.onMqttMessage(topic, message)
       }
     })
 

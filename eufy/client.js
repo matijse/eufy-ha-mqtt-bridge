@@ -1,3 +1,4 @@
+const winston = require('winston')
 const config = require('../config')
 const { MqttClient } = require('../mqtt')
 const { EufyHttp, EufyPush, EufyDevices } = require('../eufy')
@@ -11,6 +12,8 @@ class EufyClient {
     this.eufyPush = new EufyPush(this.mqttClient)
     this.eufyDevices = new EufyDevices(this.eufyHttpClient, this.mqttClient)
 
+    this.mqttClient.onMqttMessage = this.onMqttMessage.bind(this)
+
     await this.mqttClient.connect()
     await this.eufyHttpClient.refreshStoredDevices()
     await this.mqttClient.setupAutoDiscovery()
@@ -23,6 +26,23 @@ class EufyClient {
     Scheduler.runEveryHour(async () => {
       await this.eufyDevices.processDeviceProperties()
     }, true)
+  }
+
+  async onMqttMessage (topic, message) {
+    message = message.toString()
+    winston.debug(`MQTT message: [${topic}]: ${message}`)
+
+    if (topic === 'homeassistant/status') {
+      if (message === 'online') {
+        await this.onHomeAssistantStartup()
+      }
+    }
+  }
+
+  async onHomeAssistantStartup () {
+    await this.eufyHttpClient.refreshStoredDevices()
+    await this.mqttClient.setupAutoDiscovery()
+    await this.eufyDevices.retrieveDeviceThumbnails()
   }
 }
 
