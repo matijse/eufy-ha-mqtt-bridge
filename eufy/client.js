@@ -7,25 +7,42 @@ const Scheduler = require('../sheduler')
 class EufyClient {
 
   async init() {
+    winston.debug('---- EUFY INITIALIZE START ----')
     this.mqttClient = new MqttClient()
     this.eufyHttpClient = new EufyHttp(config.eufyUsername, config.eufyPassword)
     this.eufyPush = new EufyPush(this.mqttClient)
     this.eufyDevices = new EufyDevices(this.eufyHttpClient, this.mqttClient)
+    winston.debug('----  Created classes...')
 
     this.mqttClient.onMqttMessage = this.onMqttMessage.bind(this)
+    winston.debug('----  Set up MQTT handler')
 
     await this.mqttClient.connect()
+    winston.debug('----  Connected to MQTT')
+
     await this.eufyHttpClient.refreshStoredDevices()
+    winston.debug('----  Refreshed devices')
+
     await this.mqttClient.setupAutoDiscovery()
+    winston.debug('----  Set up auto discovery')
+
     await this.eufyPush.retrievePushCredentials()
+    winston.debug('----  Retrieved push credentials')
+
     await this.eufyPush.startPushClient()
+    winston.debug('----  Started push client')
+
     const fcmToken = this.eufyPush.getFcmToken()
     await this.eufyHttpClient.registerPushToken(fcmToken)
+    winston.debug('----  Registered push token')
+
     await this.eufyDevices.retrieveDeviceThumbnails()
+    winston.debug('----  Retrieved device thumbnails')
 
     Scheduler.runEveryHour(async () => {
       await this.eufyDevices.processDeviceProperties()
     }, true)
+    winston.debug('---- EUFY INITIALIZE DONE! ----')
   }
 
   async onMqttMessage (topic, message) {
@@ -46,4 +63,4 @@ class EufyClient {
   }
 }
 
-exports.EufyClient = EufyClient
+module.exports = EufyClient

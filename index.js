@@ -1,7 +1,7 @@
 const winston = require('winston')
 
 winston.configure({
-  level: 'info',
+  level: 'debug',
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.json(),
@@ -20,7 +20,7 @@ winston.add(new winston.transports.Console({
   format: winston.format.simple(),
 }));
 
-const { EufyClient } = require('./eufy/client')
+const EufyClient = require('./eufy/client')
 
 const eufyClient = new EufyClient()
 eufyClient.init()
