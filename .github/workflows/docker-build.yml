@@ -25,3 +25,10 @@ jobs:
           tags: |
             matijse/eufy-ha-mqtt-bridge:${{ github.event.release.tag_name }}
             matijse/eufy-ha-mqtt-bridge:latest
+      - name: Trigger Addon update
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          repository: MaxWinterstein/homeassistant-addons
+          event-type: create_mr_and_build_image
+          client-payload: '{"version": "${{ github.event.release.tag_name }}"}'

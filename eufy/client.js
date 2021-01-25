@@ -14,14 +14,14 @@ class EufyClient {
     this.eufyDevices = new EufyDevices(this.eufyHttpClient, this.mqttClient)
     winston.debug('----  Created classes...')
 
+    await this.eufyHttpClient.refreshStoredDevices()
+    winston.debug('----  Refreshed devices')
+
     this.mqttClient.onMqttMessage = this.onMqttMessage.bind(this)
     winston.debug('----  Set up MQTT handler')
 
     await this.mqttClient.connect()
     winston.debug('----  Connected to MQTT')
-
-    await this.eufyHttpClient.refreshStoredDevices()
-    winston.debug('----  Refreshed devices')
 
     await this.mqttClient.setupAutoDiscovery()
     winston.debug('----  Set up auto discovery')
