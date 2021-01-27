@@ -57,7 +57,6 @@ const capabilities = {
   [deviceType.FLOODLIGHT_CAMERA]: [
     NotificationType.EVENT_MOTION_DETECTED,
     NotificationType.THUMBNAIL,
-    SensorType.BATTERY_PERCENTAGE,
   ],
   [deviceType.INDOOR_CAM]: [
     NotificationType.EVENT_MOTION_DETECTED,
@@ -66,7 +65,6 @@ const capabilities = {
     NotificationType.EVENT_SOUND_DETECTED,
     NotificationType.EVENT_PET_DETECTED,
     NotificationType.THUMBNAIL,
-    SensorType.BATTERY_PERCENTAGE,
   ],
   [deviceType.INDOOR_CAM_PAN_TILT]: [
     NotificationType.EVENT_MOTION_DETECTED,
@@ -75,7 +73,6 @@ const capabilities = {
     NotificationType.EVENT_SOUND_DETECTED,
     NotificationType.EVENT_PET_DETECTED,
     NotificationType.THUMBNAIL,
-    SensorType.BATTERY_PERCENTAGE,
   ],
   [deviceType.MOTION_SENSOR]: [
     NotificationType.EVENT_MOTION_DETECTED,
