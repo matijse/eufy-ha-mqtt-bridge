@@ -98,6 +98,11 @@ services:
       - /path/to/local/data/folder:/app/data
 ```
 
+If for some reason the connection with MQTT is lost, all sensors will be marked Unavailable in Home Assistant. So if
+you prefer you can remove the auto restart from the Docker image, and add an automation to Home Assistant to notify 
+yourself when a sensor is Unavailable. This prevents your account from getting blocked when the script keeps restarting 
+due to a bug...
+
 ### Run via npm
 
 To run directly via npm:
