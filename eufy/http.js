@@ -1,4 +1,5 @@
 const { HttpService } = require('eufy-node-client')
+const { LocalLookupService, DeviceClientService, CommandType } = require('eufy-node-client');
 const winston = require('winston')
 const get = require('get-value')
 const DB = require('../db')
@@ -54,6 +55,20 @@ class EufyHttp {
   async checkPushToken () {
     const response = await this.httpService.pushTokenCheck()
     winston.info(`Checked Push Token`, { response })
+  }
+
+  async setArmingMode () {
+    const lookupService = new LocalLookupService();
+    const address = await lookupService.lookup('192.168.1.1');
+    console.log('Found address', address);
+
+    const devClientService = new DeviceClientService(address, P2P_DID, ACTOR_ID);
+    await devClientService.connect();
+    console.log('Connected!');
+
+    // CMD_SET_ARMING  # 0 => away 1 => home, 2 => schedule, 63 => disarmed
+    devClientService.sendCommandWithInt(CommandType.CMD_SET_ARMING, 1);
+    console.log('Sended command...');
   }
 }
 
