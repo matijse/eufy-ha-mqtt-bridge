@@ -80,7 +80,6 @@ Run the container, with a volume mapping to the local data directory, for exampl
 docker run \
    -d \
    --name eufy-bridge \
-   --restart unless-stopped \
    -v /path/to/local/data/folder:/app/data \
    --add-host=dockerhost:`docker network inspect --format='{{range .IPAM.Config}}{{.Gateway}}{{end}}' bridge` \
    matijse/eufy-ha-mqtt-bridge
@@ -93,15 +92,13 @@ services:
   eufy-bridge:
     container_name: eufy-bridge
     image: matijse/eufy-ha-mqtt-bridge
-    restart: unless-stopped
     volumes:
       - /path/to/local/data/folder:/app/data
 ```
 
-If for some reason the connection with MQTT is lost, all sensors will be marked Unavailable in Home Assistant. So if
-you prefer you can remove the auto restart from the Docker image, and add an automation to Home Assistant to notify 
-yourself when a sensor is Unavailable. This prevents your account from getting blocked when the script keeps restarting 
-due to a bug...
+If for some reason the connection with MQTT is lost, all sensors will be marked Unavailable in Home Assistant. So I
+recommend not auto-restarting the Docker image, but adding an automation to Home Assistant to notify yourself when a 
+sensor is Unavailable. This prevents your account from getting blocked when the script keeps restarting due to a bug...
 
 ### Run via npm
 
