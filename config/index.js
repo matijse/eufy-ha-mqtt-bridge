@@ -9,6 +9,7 @@ class Config {
   mqttUrl
   mqttUsername
   mqttPassword
+  mqttKeepalive
 
   constructor () {
     let config
@@ -25,6 +26,8 @@ class Config {
     this.mqttUrl = get(config, 'mqtt.url')
     this.mqttUsername = get(config, 'mqtt.username')
     this.mqttPassword = get(config, 'mqtt.password')
+
+    this.mqttKeepalive = parseInt(get(config, 'mqtt.keepalive', { default: 60 }))
 
     if (
       typeof this.eufyUsername === "undefined" ||

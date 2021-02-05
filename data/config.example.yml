@@ -5,3 +5,4 @@ mqtt:
   url: "mqtt://dockerhost:1883"
   username: "user"
   password: "password"
+  keepalive: 60

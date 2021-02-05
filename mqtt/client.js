@@ -16,7 +16,7 @@ class MqttClient {
 
   async connect() {
     let options = {
-      keepalive: 60,
+      keepalive: config.mqttKeepalive,
       reconnectPeriod: 1000,
       will: {
         topic: HaDiscovery.availabilityTopic,
