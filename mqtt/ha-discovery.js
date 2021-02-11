@@ -4,6 +4,8 @@ const { DeviceCapabilities } = require('../enums/device_type')
 
 class HaDiscovery {
 
+  availabilityTopic = `homeassistant/eufy/available`
+
   discoveryConfigs (device) {
     let configs = []
     const deviceName = device.name
@@ -116,6 +118,7 @@ class HaDiscovery {
         message: JSON.stringify({
           name: sensorName,
           device_class: sensorDeviceClass,
+          availability_topic: this.availabilityTopic,
           state_topic: `${sensorBaseTopic}/state`,
           json_attributes_topic: `${sensorBaseTopic}/attributes`,
           payload_on: sensorPayloadOn,
@@ -134,6 +137,7 @@ class HaDiscovery {
         topic: `${sensorBaseTopic}/config`,
         message: JSON.stringify({
           name: sensorName,
+          availability_topic: this.availabilityTopic,
           topic: `${sensorBaseTopic}`,
           unique_id: sensorId,
           device: {
@@ -150,6 +154,7 @@ class HaDiscovery {
         message: JSON.stringify({
           name: sensorName,
           device_class: sensorDeviceClass,
+          availability_topic: this.availabilityTopic,
           state_topic: `${sensorBaseTopic}/state`,
           unit_of_measurement: '%',
           unique_id: sensorId,
@@ -168,6 +173,7 @@ class HaDiscovery {
       message: JSON.stringify({
         name: sensorName,
         device_class: sensorDeviceClass,
+        availability_topic: this.availabilityTopic,
         state_topic: `${sensorBaseTopic}/state`,
         json_attributes_topic: `${sensorBaseTopic}/attributes`,
         payload_on: sensorPayloadOn,

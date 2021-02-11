@@ -15,12 +15,24 @@ class MqttClient {
   onMqttMessage = null
 
   async connect() {
-    this.client = await MQTT.connectAsync(config.mqttUrl, {
-      username: config.mqttUsername,
-      password: config.mqttPassword,
-      keepalive: 60,
-      reconnectPeriod: 1000
-    })
+    let options = {
+      keepalive: config.mqttKeepalive,
+      reconnectPeriod: 1000,
+      will: {
+        topic: HaDiscovery.availabilityTopic,
+        payload: 'offline',
+        retain: false
+      }
+    }
+
+    if (config.mqttUsername) {
+      options.username = config.mqttUsername
+    }
+    if (config.mqttPassword) {
+      options.password = config.mqttPassword
+    }
+
+    this.client = await MQTT.connectAsync(config.mqttUrl, options)
 
     this.client.on('error', error => {
       winston.error(`MQTT error`, { error })
@@ -28,6 +40,7 @@ class MqttClient {
 
     this.client.on('reconnect', () => {
       winston.info(`MQTT reconnect`)
+      this.sendAvailable()
     })
 
     this.client.on('close', () => {
@@ -58,6 +71,11 @@ class MqttClient {
     }
     // Give Home Assistant some time to setup all sensors
     await sleep(5 * 1000)
+    await this.sendAvailable()
+  }
+
+  async sendAvailable () {
+    await this.client.publish(HaDiscovery.availabilityTopic, 'online')
   }
 
   async processPushNotification (notification) {

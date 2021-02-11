@@ -9,6 +9,7 @@ class Config {
   mqttUrl
   mqttUsername
   mqttPassword
+  mqttKeepalive
 
   constructor () {
     let config
@@ -26,12 +27,12 @@ class Config {
     this.mqttUsername = get(config, 'mqtt.username')
     this.mqttPassword = get(config, 'mqtt.password')
 
+    this.mqttKeepalive = parseInt(get(config, 'mqtt.keepalive', { default: 60 }))
+
     if (
       typeof this.eufyUsername === "undefined" ||
       typeof this.eufyPassword === "undefined" ||
-      typeof this.mqttUrl === "undefined" ||
-      typeof this.mqttUsername === "undefined" ||
-      typeof this.mqttPassword === "undefined"
+      typeof this.mqttUrl === "undefined"
     ) {
       winston.error('Missing configuration, please check config.yml')
       throw new Error('Missing configuration, please check config.yml')

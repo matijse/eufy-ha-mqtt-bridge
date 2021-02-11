@@ -36,8 +36,8 @@ are automatically discovered in Home Assistant.
 | Indoor Cam 2K (T8400) | :heavy_check_mark: | :heavy_check_mark: | :x: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: |
 | Indoor Cam Pan & Tilt (T8410) | :heavy_check_mark: | :heavy_check_mark: | :x: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: |
 | Motion Sensor (T8910) | :heavy_check_mark: | :x: | :x: | :x: | :x: | :x: | :x: | :heavy_check_mark: |
-| Eufy video doorbell 1080P (battery) (T8220) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
-| Eufy video doorbell 1080P (powered) (T8221 / T8222) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: | :x: |
+| Eufy video doorbell 1080P (battery) (T8220 / T8222) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
+| Eufy video doorbell 1080P (powered) (T8221) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: | :x: |
 | Eufy video doorbell 2K (battery) (T8210) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
 | Eufy video doorbell 2K (powered) (T8200 / T8202) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: | :x: |
 
@@ -80,7 +80,6 @@ Run the container, with a volume mapping to the local data directory, for exampl
 docker run \
    -d \
    --name eufy-bridge \
-   --restart unless-stopped \
    -v /path/to/local/data/folder:/app/data \
    --add-host=dockerhost:`docker network inspect --format='{{range .IPAM.Config}}{{.Gateway}}{{end}}' bridge` \
    matijse/eufy-ha-mqtt-bridge
@@ -93,10 +92,13 @@ services:
   eufy-bridge:
     container_name: eufy-bridge
     image: matijse/eufy-ha-mqtt-bridge
-    restart: unless-stopped
     volumes:
       - /path/to/local/data/folder:/app/data
 ```
+
+If for some reason the connection with MQTT is lost, all sensors will be marked Unavailable in Home Assistant. So I
+recommend not auto-restarting the Docker image, but adding an automation to Home Assistant to notify yourself when a 
+sensor is Unavailable. This prevents your account from getting blocked when the script keeps restarting due to a bug...
 
 ### Run via npm
 
