@@ -3,6 +3,7 @@ const { SensorType } = require('./sensor_type')
 
 const deviceType = {
   DOOR_SENSOR: 'T8900',
+  EUFYCAM_1: 'T8111',
   EUFYCAM_2: 'T8114',
   EUFYCAM_2C: 'T8113',
   EUFYCAM_2C_PRO: 'T8142',
@@ -23,6 +24,12 @@ const deviceType = {
 const capabilities = {
   [deviceType.DOOR_SENSOR]: [
     NotificationType.DOOR_SENSOR_CHANGED,
+    SensorType.BATTERY_PERCENTAGE,
+  ],
+  [deviceType.EUFYCAM_1]: [
+    NotificationType.EVENT_MOTION_DETECTED,
+    NotificationType.EVENT_PERSON_DETECTED,
+    NotificationType.THUMBNAIL,
     SensorType.BATTERY_PERCENTAGE,
   ],
   [deviceType.EUFYCAM_2]: [

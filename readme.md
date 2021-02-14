@@ -27,6 +27,7 @@ are automatically discovered in Home Assistant.
 
 |   | Motion detected | Person detected | Doorbell press | Crying detected | Sound detected | Pet detected | Thumbnail last event | Battery status |
 |--|--|--|--|--|--|--|--|--|
+| Eufy Cam 1 (T8111) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
 | Eufy Cam 2 (T8114) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
 | Eufy Cam 2 Pro (T8140) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
 | Eufy Cam 2C (T8113) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
