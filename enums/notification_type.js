@@ -15,6 +15,7 @@ const notificationType = {
 const notificationTypeByString = {
   'Motion is detected': 3101,
   'Motion detected': 3101,
+  'is triggered': 3101,
   'Someone has been spotted': 3102,
   'Trigger is open': 100001,
   'Trigger is close': 100001,
