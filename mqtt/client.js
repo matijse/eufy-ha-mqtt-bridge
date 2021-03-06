@@ -174,7 +174,7 @@ class MqttClient {
     }
 
     // Notification based on PushType
-    type = parseInt(get(notification, 'type', { default: 0}))
+    type = parseInt(get(notification, 'payload.type', { default: 0}))
     if (supportedNotificationPushTypes.includes(type)) {
       return NotificationTypeByPushType[type]
     }
