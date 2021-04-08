@@ -29,8 +29,8 @@ are automatically discovered in Home Assistant.
 |--|--|--|--|--|--|--|--|--|
 | Eufy Cam 1 (T8111) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
 | Eufy Cam 2 (T8114) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
-| Eufy Cam 2 Pro (T8140) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
-| Eufy Cam 2C (T8113) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
+| Eufy Cam 2 Pro (T8140/T8140-Z) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
+| Eufy Cam 2C (T8113/T8113-Z) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
 | Eufy Cam 2C Pro (T8142/T8142-Z) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
 | Eufy Cam E (T8112) | :heavy_check_mark: | :x: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
 | Floodlight Camera (T8420) | :heavy_check_mark: | :x: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :x: |
