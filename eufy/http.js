@@ -25,7 +25,12 @@ class EufyHttp {
 
     winston.debug('Refreshing devices...')
 
-    this.devices = await this.httpService.listDevices()
+    try {
+      this.devices = await this.httpService.listDevices()
+    } catch (e) {
+      winston.error(`Error -- httpService.listDevices`, e)
+      this.devices = []
+    }
     this.devicesRefreshedAt = new Date().getTime()
     winston.silly(`Device list: `, this.devices)
 
@@ -47,13 +52,21 @@ class EufyHttp {
   }
 
   async registerPushToken (fcmToken) {
-    const response = await this.httpService.registerPushToken(fcmToken);
-    winston.info(`Registered Push Token`, { response })
+    try {
+      const response = await this.httpService.registerPushToken(fcmToken);
+      winston.info(`Registered Push Token`, { response })
+    } catch (e) {
+      winston.error(`Error -- httpService.registerPushToken`, e)
+    }
   }
 
   async checkPushToken () {
-    const response = await this.httpService.pushTokenCheck()
-    winston.info(`Checked Push Token`, { response })
+    try {
+      const response = await this.httpService.pushTokenCheck()
+      winston.info(`Checked Push Token`, { response })
+    } catch (e) {
+      winston.error(`Error -- httpService.pushTokenCheck`, e)
+    }
   }
 }
 
