@@ -2,7 +2,7 @@ const MQTT = require('async-mqtt')
 const get = require('get-value')
 const fetch = require('node-fetch')
 const winston = require('winston')
-const { sleep } = require('eufy-node-client')
+const Scheduler = require('../scheduler')
 const DB = require('../db')
 const config = require('../config')
 const { NotificationType, NotificationTypeByString, NotificationTypeByPushType,
@@ -70,7 +70,7 @@ class MqttClient {
       }
     }
     // Give Home Assistant some time to setup all sensors
-    await sleep(5 * 1000)
+    await Scheduler.sleep(5 * 1000)
     await this.sendAvailable()
   }
 

@@ -1,7 +1,8 @@
 const fs = require('fs')
 const winston = require('winston')
-const { PushRegisterService, PushClient, sleep } = require('eufy-node-client')
+const { PushNotificationService, PushClient } = require('eufy-security-client')
 const DB = require('../db')
+const Scheduler = require('../scheduler')
 
 class EufyPush {
   CREDENTIALS_FILE = './data/credentials.json'
@@ -24,13 +25,13 @@ class EufyPush {
 
     // Register push credentials
     winston.info('No credentials found -> register new...');
-    const pushService = new PushRegisterService();
-    this.pushCredentials = await pushService.createPushCredentials();
+    const pushService = new PushNotificationService(winston);
+    this.pushCredentials = await pushService.getCredentials()
     // Store credentials
     fs.writeFileSync(this.CREDENTIALS_FILE, JSON.stringify(this.pushCredentials));
 
     // We have to wait shortly to give google some time to process the registration
-    await sleep(5 * 1000);
+    await Scheduler.sleep(5 * 1000);
   }
 
   async startPushClient() {
@@ -41,8 +42,11 @@ class EufyPush {
     const pushClient = await PushClient.init({
       androidId: this.pushCredentials.checkinResponse.androidId,
       securityToken: this.pushCredentials.checkinResponse.securityToken,
-    });
-    pushClient.connect(async (msg) => {
+    }, winston);
+
+    pushClient.connect()
+
+    pushClient.subscribe(async (msg) => {
       try {
         await DB.storePush(msg)
       } catch (e) {
