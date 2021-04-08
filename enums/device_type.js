@@ -6,9 +6,11 @@ const deviceType = {
   EUFYCAM_1: 'T8111',
   EUFYCAM_2: 'T8114',
   EUFYCAM_2C: 'T8113',
+  EUFYCAM_2C_Z: 'T8113-Z',
   EUFYCAM_2C_PRO: 'T8142',
   EUFYCAM_2C_PRO_Z: 'T8142-Z',
   EUFYCAM_2_PRO: 'T8140',
+  EUFYCAM_2_PRO_Z: 'T8140-Z',
   EUFYCAM_E: 'T8112',
   FLOODLIGHT_CAMERA: 'T8420',
   INDOOR_CAM: 'T8400',
@@ -45,6 +47,12 @@ const capabilities = {
     NotificationType.THUMBNAIL,
     SensorType.BATTERY_PERCENTAGE,
   ],
+  [deviceType.EUFYCAM_2C_Z]: [
+    NotificationType.EVENT_MOTION_DETECTED,
+    NotificationType.EVENT_PERSON_DETECTED,
+    NotificationType.THUMBNAIL,
+    SensorType.BATTERY_PERCENTAGE,
+  ],
   [deviceType.EUFYCAM_2C_PRO]: [
     NotificationType.EVENT_MOTION_DETECTED,
     NotificationType.EVENT_PERSON_DETECTED,
@@ -58,6 +66,12 @@ const capabilities = {
     SensorType.BATTERY_PERCENTAGE,
   ],
   [deviceType.EUFYCAM_2_PRO]: [
+    NotificationType.EVENT_MOTION_DETECTED,
+    NotificationType.EVENT_PERSON_DETECTED,
+    NotificationType.THUMBNAIL,
+    SensorType.BATTERY_PERCENTAGE,
+  ],
+  [deviceType.EUFYCAM_2_PRO_Z]: [
     NotificationType.EVENT_MOTION_DETECTED,
     NotificationType.EVENT_PERSON_DETECTED,
     NotificationType.THUMBNAIL,
