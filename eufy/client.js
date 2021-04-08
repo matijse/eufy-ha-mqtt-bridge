@@ -59,6 +59,7 @@ class EufyClient {
   async onHomeAssistantStartup () {
     await this.eufyHttpClient.refreshStoredDevices()
     await this.mqttClient.setupAutoDiscovery()
+    await this.eufyDevices.processDeviceProperties()
     await this.eufyDevices.retrieveDeviceThumbnails()
   }
 }
