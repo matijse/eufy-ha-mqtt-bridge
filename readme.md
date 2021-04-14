@@ -38,7 +38,7 @@ are automatically discovered in Home Assistant.
 | Indoor Cam Pan & Tilt (T8410) | :heavy_check_mark: | :heavy_check_mark: | :x: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: |
 | Motion Sensor (T8910) | :heavy_check_mark: | :x: | :x: | :x: | :x: | :x: | :x: | :heavy_check_mark: |
 | Eufy video doorbell 1080P (battery) (T8220 / T8222) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
-| Eufy video doorbell 1080P (powered) (T8221) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: | :x: |
+| Eufy video doorbell 1080P (powered) (T8221 / T8201) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: | :x: |
 | Eufy video doorbell 2K (battery) (T8210) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
 | Eufy video doorbell 2K (powered) (T8200 / T8202) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: | :x: |
 
