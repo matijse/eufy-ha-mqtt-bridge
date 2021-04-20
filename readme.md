@@ -49,19 +49,10 @@ help with adding support for new devices or message types that aren't supported 
 
 ## Setup 
 
-### Docker configuration
+### Configuration 
 
-The data folder contains the config, logs and a record of all push notifications (so new types of notifications can
-be discovered). Mount this directory to a local folder. Replace `/path/to/local/data/folder`
-below with the location where you want to store this data.
-
-If you run your MQTT broker on the same host as this Docker image, it cannot simply connect to `localhost` from inside
-this Docker image. In that case, add a line to add the correct IP for the Docker network inside the image as 
-`dockerhost`. You can then use `mqtt://dockerhost:1883` as the MQTT url. Otherwise, you can remove that line from the
-example below.
-
-In the data directory, you will need to create a `config.yml` file with your credentials. It should contain the 
-following contents:
+In the data directory, you will need to create a `config.yml` file with your credentials. You can copy this from
+`config.example.yml`. It should contain the following contents:
 
 ```yaml
 eufy:
@@ -71,7 +62,31 @@ mqtt:
   url: "mqtt://dockerhost:1883"
   username: "user"
   password: "password"
+  keepalive: 60
+home_assistant:
+  off_delay: 5
 ```
+
+Only the Eufy username and password and MQTT url are required. Also MQTT username and password when set at the broker.
+The other options can be omitted, with the defaults shown above.
+
+* MQTT keepalive: adjusts the keepalive interval for the MQTT connection. This is the maximum interval in seconds 
+  between messages to/from the MQTT broker. Set this higher when you encounter disconnects.
+* Home Assistant `off_delay`: Sets the delay in seconds after which a motion/doorbell sensor is set back to "No motion" 
+  after motion is detected.  
+
+### Data folder
+
+The data folder contains the config, logs and a record of all push notifications (so new types of notifications can
+be discovered). Mount this directory to a local folder. Replace `/path/to/local/data/folder` in the Docker setups
+below with the location where you want to store this data.
+
+### Connecting to MQTT
+
+If you run your MQTT broker on the same host as this Docker image, it cannot simply connect to `localhost` from inside
+this Docker image. In that case, add a line to add the correct IP for the Docker network inside the image as 
+`dockerhost`. You can then use `mqtt://dockerhost:1883` as the MQTT url. Otherwise, you can remove that line from the
+example below.
 
 ### Run via Docker
 

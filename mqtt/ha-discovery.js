@@ -1,6 +1,7 @@
 const { NotificationType } = require('../enums/notification_type');
 const { SensorType } = require('../enums/sensor_type');
 const { DeviceCapabilities } = require('../enums/device_type')
+const config = require('../config')
 
 class HaDiscovery {
 
@@ -177,7 +178,7 @@ class HaDiscovery {
         state_topic: `${sensorBaseTopic}/state`,
         json_attributes_topic: `${sensorBaseTopic}/attributes`,
         payload_on: sensorPayloadOn,
-        off_delay: 5,
+        off_delay: config.haOffDelay,
         unique_id: sensorId,
         device: {
           identifiers: deviceSN,

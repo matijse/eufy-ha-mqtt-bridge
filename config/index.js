@@ -6,10 +6,13 @@ const winston = require('winston')
 class Config {
   eufyUsername
   eufyPassword
+
   mqttUrl
   mqttUsername
   mqttPassword
   mqttKeepalive
+
+  haOffDelay
 
   constructor () {
     let config
@@ -26,8 +29,9 @@ class Config {
     this.mqttUrl = get(config, 'mqtt.url')
     this.mqttUsername = get(config, 'mqtt.username')
     this.mqttPassword = get(config, 'mqtt.password')
-
     this.mqttKeepalive = parseInt(get(config, 'mqtt.keepalive', { default: 60 }))
+
+    this.haOffDelay = parseInt(get(config, 'home_assistant.off_delay', { default: 5 }))
 
     if (
       typeof this.eufyUsername === "undefined" ||

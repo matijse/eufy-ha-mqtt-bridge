@@ -6,3 +6,5 @@ mqtt:
   username: "user"
   password: "password"
   keepalive: 60
+home_assistant:
+  off_delay: 5
