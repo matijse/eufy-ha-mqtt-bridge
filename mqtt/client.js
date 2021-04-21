@@ -2,6 +2,7 @@ const MQTT = require('async-mqtt')
 const get = require('get-value')
 const fetch = require('node-fetch')
 const winston = require('winston')
+const { validateBufferMIMEType } = require('validate-image-type')
 const { sleep } = require('eufy-node-client')
 const DB = require('../db')
 const config = require('../config')
@@ -112,6 +113,7 @@ class MqttClient {
     }
 
     if (attributes.thumbnail && attributes.thumbnail.length > 0) {
+      await sleep(100)
       await this.uploadThumbnail(deviceSN, attributes.thumbnail)
     }
   }
@@ -125,7 +127,27 @@ class MqttClient {
   async uploadThumbnail(deviceSN, thumbnailUrl) {
     winston.debug(`Uploading new thumbnail for ${deviceSN} from ${thumbnailUrl}`)
     const response = await fetch(thumbnailUrl)
-    const image = await response.buffer()
+    let image = await response.buffer()
+
+    const result = validateBufferMIMEType(image, {
+      allowMimeTypes: ['image/jpeg', 'image/gif', 'image/png', 'image/svg+xml']
+    })
+
+    winston.debug(`Image validation result: `, result)
+
+    if (!result.ok) {
+      winston.error(`Image seems to be invalid. URL: ${thumbnailUrl}`, result)
+      await sleep(1000)
+      winston.info(`Retrying image ${thumbnailUrl} after waiting 1 second...`)
+      const response = await fetch(thumbnailUrl)
+      image = await response.buffer()
+
+      const result = validateBufferMIMEType(image, {
+        allowMimeTypes: ['image/jpeg', 'image/gif', 'image/png', 'image/svg+xml']
+      })
+
+      winston.info(`Retry - Image validation result: `, result)
+    }
 
     const topic = HaDiscovery.baseTopicForCapability(NotificationType.THUMBNAIL, deviceSN)
 
