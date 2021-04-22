@@ -129,7 +129,7 @@ class MqttClient {
     const response = await fetch(thumbnailUrl)
     let image = await response.buffer()
 
-    const result = validateBufferMIMEType(image, {
+    const result = await validateBufferMIMEType(image, {
       allowMimeTypes: ['image/jpeg', 'image/gif', 'image/png', 'image/svg+xml']
     })
 
@@ -142,11 +142,11 @@ class MqttClient {
       const response = await fetch(thumbnailUrl)
       image = await response.buffer()
 
-      const result = validateBufferMIMEType(image, {
+      const retryResult = await validateBufferMIMEType(image, {
         allowMimeTypes: ['image/jpeg', 'image/gif', 'image/png', 'image/svg+xml']
       })
 
-      winston.info(`Retry - Image validation result: `, result)
+      winston.info(`Retry - Image validation result: `, retryResult)
     }
 
     const topic = HaDiscovery.baseTopicForCapability(NotificationType.THUMBNAIL, deviceSN)
