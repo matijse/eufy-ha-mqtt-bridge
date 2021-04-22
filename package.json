@@ -17,8 +17,8 @@
     "get-value": "^3.0.1",
     "js-yaml": "^3.14.1",
     "node-fetch": "^2.6.1",
+    "sharp": "^0.28.1",
     "sqlite3": "^5.0.1",
-    "validate-image-type": "^1.1.1",
     "winston": "^3.3.3"
   }
 }

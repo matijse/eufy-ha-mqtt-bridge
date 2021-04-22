@@ -2,7 +2,7 @@ const MQTT = require('async-mqtt')
 const get = require('get-value')
 const fetch = require('node-fetch')
 const winston = require('winston')
-const { validateBufferMIMEType } = require('validate-image-type')
+const sharp = require('sharp')
 const { sleep } = require('eufy-node-client')
 const DB = require('../db')
 const config = require('../config')
@@ -129,29 +129,39 @@ class MqttClient {
     const response = await fetch(thumbnailUrl)
     let image = await response.buffer()
 
-    const result = await validateBufferMIMEType(image, {
-      allowMimeTypes: ['image/jpeg', 'image/gif', 'image/png', 'image/svg+xml']
-    })
+    const isValid = await this.validateThumbnail(image)
 
-    winston.debug(`Image validation result: `, result)
+    winston.debug(`Image validation isValid: ${isValid}`)
 
-    if (!result.ok) {
-      winston.error(`Image seems to be invalid. URL: ${thumbnailUrl}`, result)
+    if (!isValid) {
+      winston.error(`Image seems to be invalid. URL: ${thumbnailUrl}`)
       await sleep(1000)
       winston.info(`Retrying image ${thumbnailUrl} after waiting 1 second...`)
       const response = await fetch(thumbnailUrl)
       image = await response.buffer()
 
-      const retryResult = await validateBufferMIMEType(image, {
-        allowMimeTypes: ['image/jpeg', 'image/gif', 'image/png', 'image/svg+xml']
-      })
+      const retryIsValid = await this.validateThumbnail(image)
 
-      winston.info(`Retry - Image validation result: `, retryResult)
+      winston.info(`Retry - Image validation isValid: ${retryIsValid}`)
     }
 
     const topic = HaDiscovery.baseTopicForCapability(NotificationType.THUMBNAIL, deviceSN)
 
     await this.client.publish(topic, image)
+  }
+
+  validateThumbnail(buffer) {
+    return new Promise((resolve, reject) => {
+      sharp(buffer)
+        .toFile('temp.png', (err, info) => {
+          if (err) {
+            winston.error('Error validating thumbnail', err)
+            resolve(false)
+          } else {
+            resolve(true)
+          }
+        });
+    })
   }
 
   async publishBatteryPercentage(deviceSN, percentage) {
