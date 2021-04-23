@@ -10,10 +10,11 @@ RUN \
         libssl1.1 \
         musl-utils \
         musl \
-        vips-dev \
         make \
         g++ \
         sqlite \
+    && apk add libimagequant-dev --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main \
+    && apk add vips-dev --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
     \
     && rm -f -r \
         /tmp/*
