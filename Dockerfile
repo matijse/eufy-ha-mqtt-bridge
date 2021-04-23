@@ -11,6 +11,7 @@ RUN \
         musl-utils \
         musl \
         vips-dev \
+        make \
     \
     && rm -f -r \
         /tmp/*
