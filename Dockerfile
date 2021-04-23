@@ -10,6 +10,7 @@ RUN \
         libssl1.1 \
         musl-utils \
         musl \
+        vips-dev \
     \
     && rm -f -r \
         /tmp/*
