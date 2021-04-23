@@ -12,6 +12,8 @@ RUN \
         musl \
         vips-dev \
         make \
+        g++ \
+        sqlite \
     \
     && rm -f -r \
         /tmp/*
