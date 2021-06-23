@@ -13,8 +13,10 @@ const deviceType = {
   EUFYCAM_2_PRO_Z: 'T8140-Z',
   EUFYCAM_E: 'T8112',
   FLOODLIGHT_CAMERA: 'T8420',
-  INDOOR_CAM: 'T8400',
-  INDOOR_CAM_PAN_TILT: 'T8410',
+  INDOOR_CAM_2K: 'T8400',
+  INDOOR_CAM_1080P: 'T8401',
+  INDOOR_CAM_2K_PAN_TILT: 'T8410',
+  INDOOR_CAM_1080P_PAN_TILT: 'T8411',
   MOTION_SENSOR: 'T8910',
   VIDEO_DOORBELL_1080P_BATTERY: 'T8220',
   VIDEO_DOORBELL_1080P_BATTERY2: 'T8222',
@@ -87,7 +89,7 @@ const capabilities = {
     NotificationType.EVENT_MOTION_DETECTED,
     NotificationType.THUMBNAIL,
   ],
-  [deviceType.INDOOR_CAM]: [
+  [deviceType.INDOOR_CAM_2K]: [
     NotificationType.EVENT_MOTION_DETECTED,
     NotificationType.EVENT_PERSON_DETECTED,
     NotificationType.EVENT_CRYING_DETECTED,
@@ -95,7 +97,23 @@ const capabilities = {
     NotificationType.EVENT_PET_DETECTED,
     NotificationType.THUMBNAIL,
   ],
-  [deviceType.INDOOR_CAM_PAN_TILT]: [
+  [deviceType.INDOOR_CAM_1080P]: [
+    NotificationType.EVENT_MOTION_DETECTED,
+    NotificationType.EVENT_PERSON_DETECTED,
+    NotificationType.EVENT_CRYING_DETECTED,
+    NotificationType.EVENT_SOUND_DETECTED,
+    NotificationType.EVENT_PET_DETECTED,
+    NotificationType.THUMBNAIL,
+  ],
+  [deviceType.INDOOR_CAM_2K_PAN_TILT]: [
+    NotificationType.EVENT_MOTION_DETECTED,
+    NotificationType.EVENT_PERSON_DETECTED,
+    NotificationType.EVENT_CRYING_DETECTED,
+    NotificationType.EVENT_SOUND_DETECTED,
+    NotificationType.EVENT_PET_DETECTED,
+    NotificationType.THUMBNAIL,
+  ],
+  [deviceType.INDOOR_CAM_1080P_PAN_TILT]: [
     NotificationType.EVENT_MOTION_DETECTED,
     NotificationType.EVENT_PERSON_DETECTED,
     NotificationType.EVENT_CRYING_DETECTED,
