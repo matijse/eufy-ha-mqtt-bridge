@@ -35,15 +35,17 @@ are automatically discovered in Home Assistant.
 | Eufy Cam E (T8112) | :heavy_check_mark: | :x: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
 | Floodlight Camera (T8420) | :heavy_check_mark: | :x: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :x: |
 | Floodlight Camera X (T8420X) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :x: |
+| Indoor Cam 1080P (T8401) | :heavy_check_mark: | :heavy_check_mark: | :x: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: |
 | Indoor Cam 2K (T8400) | :heavy_check_mark: | :heavy_check_mark: | :x: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: |
-| Indoor Cam Pan & Tilt (T8410) | :heavy_check_mark: | :heavy_check_mark: | :x: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: |
+| Indoor Cam Pan & Tilt 1080P (T8411) | :heavy_check_mark: | :heavy_check_mark: | :x: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: |
+| Indoor Cam Pan & Tilt 2K (T8410) | :heavy_check_mark: | :heavy_check_mark: | :x: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: |
 | Motion Sensor (T8910) | :heavy_check_mark: | :x: | :x: | :x: | :x: | :x: | :x: | :heavy_check_mark: |
 | Eufy video doorbell 1080P (battery) (T8220 / T8222) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
 | Eufy video doorbell 1080P (powered) (T8221 / T8201) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: | :x: |
 | Eufy video doorbell 2K (battery) (T8210) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
 | Eufy video doorbell 2K (powered) (T8200 / T8202) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: | :x: |
 
-Also, the Door Sensor (T8900) is supported, this generates a seperate sensor, based on door open/closed events.
+Also, the Door Sensor (T8900) is supported, this generates a separate sensor, based on door open/closed events.
 
 All push messages from all devices are logged, click [here](https://github.com/matijse/eufy-ha-mqtt-bridge/issues/7) to
 help with adding support for new devices or message types that aren't supported yet.
