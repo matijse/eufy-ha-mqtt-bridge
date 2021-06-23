@@ -13,6 +13,7 @@ const deviceType = {
   EUFYCAM_2_PRO_Z: 'T8140-Z',
   EUFYCAM_E: 'T8112',
   FLOODLIGHT_CAMERA: 'T8420',
+  FLOODLIGHT_CAMERA_X: 'T8420X',
   INDOOR_CAM_2K: 'T8400',
   INDOOR_CAM_1080P: 'T8401',
   INDOOR_CAM_2K_PAN_TILT: 'T8410',
@@ -87,6 +88,11 @@ const capabilities = {
   ],
   [deviceType.FLOODLIGHT_CAMERA]: [
     NotificationType.EVENT_MOTION_DETECTED,
+    NotificationType.THUMBNAIL,
+  ],
+  [deviceType.FLOODLIGHT_CAMERA_X]: [
+    NotificationType.EVENT_MOTION_DETECTED,
+    NotificationType.EVENT_PERSON_DETECTED,
     NotificationType.THUMBNAIL,
   ],
   [deviceType.INDOOR_CAM_2K]: [

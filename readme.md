@@ -1,23 +1,23 @@
 # Eufy Home Assistant MQTT Bridge
 
 This script subscribes to push notifications of the Eufy Security app and publishes events via MQTT to Home Assistant.
-When using auto discovery, it automatically creates a device with sensors within Home Assistant. 
+When using auto discovery, it automatically creates a device with sensors within Home Assistant.
 
-Uses the [eufy-node-client](https://github.com/JanLoebel/eufy-node-client) by JanLoebel and is heavily inspired on 
+Uses the [eufy-node-client](https://github.com/JanLoebel/eufy-node-client) by JanLoebel and is heavily inspired on
 its examples.
 
 ## Create a second Eufy account!
 
 At the moment it is not possible to use an account with 2FA enabled. You should not use the same account here and in the
-app, because when you log in at one app, sometimes you get logged out on other locations. I recommend creating a second 
-account (with a strong random generated password and no 2FA) and invite it to your Eufy account. 
+app, because when you log in at one app, sometimes you get logged out on other locations. I recommend creating a second
+account (with a strong random generated password and no 2FA) and invite it to your Eufy account.
 
-When you receive "Failed to request" errors when starting this script, you have logged in too many times and are 
+When you receive "Failed to request" errors when starting this script, you have logged in too many times and are
 temporarily blocked. Wait a day and you'll be able to log in again.
 
 ## Home Assistant Core vs Home Assistant Add-on
 
-This repo describes running via Docker alongside Home Assistant Core. See [below](#run-as-home-assistant-add-on) 
+This repo describes running via Docker alongside Home Assistant Core. See [below](#run-as-home-assistant-add-on)
 for an option to run it as an Add-on.
 
 ## Supported devices
@@ -34,6 +34,7 @@ are automatically discovered in Home Assistant.
 | Eufy Cam 2C Pro (T8142/T8142-Z) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
 | Eufy Cam E (T8112) | :heavy_check_mark: | :x: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
 | Floodlight Camera (T8420) | :heavy_check_mark: | :x: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :x: |
+| Floodlight Camera X (T8420X) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :x: |
 | Indoor Cam 2K (T8400) | :heavy_check_mark: | :heavy_check_mark: | :x: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: |
 | Indoor Cam Pan & Tilt (T8410) | :heavy_check_mark: | :heavy_check_mark: | :x: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: |
 | Motion Sensor (T8910) | :heavy_check_mark: | :x: | :x: | :x: | :x: | :x: | :x: | :heavy_check_mark: |
@@ -47,9 +48,9 @@ Also, the Door Sensor (T8900) is supported, this generates a seperate sensor, ba
 All push messages from all devices are logged, click [here](https://github.com/matijse/eufy-ha-mqtt-bridge/issues/7) to
 help with adding support for new devices or message types that aren't supported yet.
 
-## Setup 
+## Setup
 
-### Configuration 
+### Configuration
 
 In the data directory, you will need to create a `config.yml` file with your credentials. You can copy this from
 `config.example.yml`. It should contain the following contents:
@@ -70,9 +71,9 @@ home_assistant:
 Only the Eufy username and password and MQTT url are required. Also MQTT username and password when set at the broker.
 The other options can be omitted, with the defaults shown above.
 
-* MQTT keepalive: adjusts the keepalive interval for the MQTT connection. This is the maximum interval in seconds 
+* MQTT keepalive: adjusts the keepalive interval for the MQTT connection. This is the maximum interval in seconds
   between messages to/from the MQTT broker. Set this higher when you encounter disconnects.
-* Home Assistant `off_delay`: Sets the delay in seconds after which a motion/doorbell sensor is set back to "No motion" 
+* Home Assistant `off_delay`: Sets the delay in seconds after which a motion/doorbell sensor is set back to "No motion"
   after motion is detected.  
 
 ### Data folder
@@ -84,7 +85,7 @@ below with the location where you want to store this data.
 ### Connecting to MQTT
 
 If you run your MQTT broker on the same host as this Docker image, it cannot simply connect to `localhost` from inside
-this Docker image. In that case, add a line to add the correct IP for the Docker network inside the image as 
+this Docker image. In that case, add a line to add the correct IP for the Docker network inside the image as
 `dockerhost`. You can then use `mqtt://dockerhost:1883` as the MQTT url. Otherwise, you can remove that line from the
 example below.
 
@@ -113,7 +114,7 @@ services:
 ```
 
 If for some reason the connection with MQTT is lost, all sensors will be marked Unavailable in Home Assistant. So I
-recommend not auto-restarting the Docker image, but adding an automation to Home Assistant to notify yourself when a 
+recommend not auto-restarting the Docker image, but adding an automation to Home Assistant to notify yourself when a
 sensor is Unavailable. This prevents your account from getting blocked when the script keeps restarting due to a bug...
 
 ### Run via npm
@@ -127,7 +128,7 @@ To run directly via npm:
 
 ### Run as Home Assistant Add-on
 
-[MaxWinterstein](https://github.com/MaxWinterstein/) created a Home Assistant Add-on Repository containing an easy 
+[MaxWinterstein](https://github.com/MaxWinterstein/) created a Home Assistant Add-on Repository containing an easy
 installable version of this bridge. See [MaxWinterstein/homeassistant-addons](https://github.com/MaxWinterstein/homeassistant-addons)
 for more information.
 
