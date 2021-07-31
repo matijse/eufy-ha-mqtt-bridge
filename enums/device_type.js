@@ -5,6 +5,7 @@ const deviceType = {
   DOOR_SENSOR: 'T8900',
   EUFYCAM_1: 'T8111',
   EUFYCAM_2: 'T8114',
+  EUFYCAM_2_Z: 'T8114-Z',
   EUFYCAM_2C: 'T8113',
   EUFYCAM_2C_Z: 'T8113-Z',
   EUFYCAM_2C_PRO: 'T8142',
@@ -42,6 +43,12 @@ const capabilities = {
     SensorType.BATTERY_PERCENTAGE,
   ],
   [deviceType.EUFYCAM_2]: [
+    NotificationType.EVENT_MOTION_DETECTED,
+    NotificationType.EVENT_PERSON_DETECTED,
+    NotificationType.THUMBNAIL,
+    SensorType.BATTERY_PERCENTAGE,
+  ],
+  [deviceType.EUFYCAM_2_Z]: [
     NotificationType.EVENT_MOTION_DETECTED,
     NotificationType.EVENT_PERSON_DETECTED,
     NotificationType.THUMBNAIL,

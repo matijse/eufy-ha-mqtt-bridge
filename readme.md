@@ -28,7 +28,7 @@ are automatically discovered in Home Assistant.
 |   | Motion detected | Person detected | Doorbell press | Crying detected | Sound detected | Pet detected | Thumbnail last event | Battery status |
 |--|--|--|--|--|--|--|--|--|
 | Eufy Cam 1 (T8111) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
-| Eufy Cam 2 (T8114) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
+| Eufy Cam 2 (T8114/T8114-Z) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
 | Eufy Cam 2 Pro (T8140/T8140-Z) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
 | Eufy Cam 2C (T8113/T8113-Z) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
 | Eufy Cam 2C Pro (T8142/T8142-Z) | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
@@ -40,7 +40,7 @@ are automatically discovered in Home Assistant.
 | Indoor Cam Pan & Tilt 1080P (T8411) | :heavy_check_mark: | :heavy_check_mark: | :x: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: |
 | Indoor Cam Pan & Tilt 2K (T8410) | :heavy_check_mark: | :heavy_check_mark: | :x: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: |
 | Motion Sensor (T8910) | :heavy_check_mark: | :x: | :x: | :x: | :x: | :x: | :x: | :heavy_check_mark: |
-| Eufy video doorbell 1080P (battery) (T8220 / T8222 / T8222-Z) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
+| Eufy video doorbell 1080P (battery) (T8220 / T8220-Z / T8222 / T8222-Z) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
 | Eufy video doorbell 1080P (powered) (T8221 / T8201) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: | :x: |
 | Eufy video doorbell 2K (battery) (T8210) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
 | Eufy video doorbell 2K (powered) (T8200 / T8202) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: | :x: | :heavy_check_mark: | :x: |
