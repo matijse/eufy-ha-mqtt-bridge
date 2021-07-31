@@ -1,14 +1,23 @@
 const fs = require('fs')
 const winston = require('winston')
 const { PushRegisterService, PushClient, sleep } = require('eufy-node-client')
-const DB = require('../db')
 
 class EufyPush {
   CREDENTIALS_FILE = './data/credentials.json'
   pushCredentials = null
+  logger
 
   constructor (mqttClient) {
     this.mqttClient = mqttClient
+    this.logger = winston.createLogger({
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json(),
+      ),
+      transports: [
+        new winston.transports.File({ filename: './data/push.log' }),
+      ]
+    })
   }
 
   async retrievePushCredentials() {
@@ -43,12 +52,7 @@ class EufyPush {
       securityToken: this.pushCredentials.checkinResponse.securityToken,
     });
     pushClient.connect(async (msg) => {
-      try {
-        await DB.storePush(msg)
-      } catch (e) {
-        winston.warn(`Could not store push message`, { exception: e })
-      }
-
+      this.logger.info('Received push message', { pushMessage: msg })
       winston.debug(`Received push message`, { pushMessage: msg });
       await this.mqttClient.processPushNotification(msg)
     });

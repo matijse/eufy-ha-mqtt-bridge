@@ -13,12 +13,10 @@
   "license": "ISC",
   "dependencies": {
     "async-mqtt": "^2.6.1",
-    "eufy-node-client": "^0.4.0",
+    "eufy-node-client": "^0.5.0",
     "get-value": "^3.0.1",
     "js-yaml": "^3.14.1",
     "node-fetch": "^2.6.1",
-    "sharp": "^0.28.3",
-    "sqlite3": "^5.0.1",
     "winston": "^3.3.3"
   }
 }

@@ -2,9 +2,7 @@ const MQTT = require('async-mqtt')
 const get = require('get-value')
 const fetch = require('node-fetch')
 const winston = require('winston')
-const sharp = require('sharp')
 const { sleep } = require('eufy-node-client')
-const DB = require('../db')
 const config = require('../config')
 const { NotificationType, NotificationTypeByString, NotificationTypeByPushType,
   supportedNotificationTypes, supportedNotificationStrings, supportedNotificationPushTypes } = require('../enums/notification_type')
@@ -62,8 +60,7 @@ class MqttClient {
     }
   }
 
-  async setupAutoDiscovery () {
-    const devices = await DB.getDevices()
+  async setupAutoDiscovery (devices) {
     for (let device of devices) {
       const configs = HaDiscovery.discoveryConfigs(device)
       for (let config of configs) {
@@ -126,42 +123,29 @@ class MqttClient {
 
   async uploadThumbnail(deviceSN, thumbnailUrl) {
     winston.debug(`Uploading new thumbnail for ${deviceSN} from ${thumbnailUrl}`)
-    const response = await fetch(thumbnailUrl)
-    let image = await response.buffer()
-
-    const isValid = await this.validateThumbnail(image)
-
-    winston.debug(`Image validation isValid: ${isValid}`)
-
-    if (!isValid) {
-      winston.error(`Image seems to be invalid. URL: ${thumbnailUrl}`)
-      await sleep(1000)
-      winston.info(`Retrying image ${thumbnailUrl} after waiting 1 second...`)
-      const response = await fetch(thumbnailUrl)
-      image = await response.buffer()
-
-      const retryIsValid = await this.validateThumbnail(image)
-
-      winston.info(`Retry - Image validation isValid: ${retryIsValid}`)
-    }
-
     const topic = HaDiscovery.baseTopicForCapability(NotificationType.THUMBNAIL, deviceSN)
 
-    await this.client.publish(topic, image)
+    await this.publishImage(thumbnailUrl, topic)
+
+    await sleep(1000)
+
+    winston.info(`Retrying image ${thumbnailUrl} after waiting 1 second...`)
+
+    await this.publishImage(thumbnailUrl, topic)
   }
 
-  validateThumbnail(buffer) {
-    return new Promise((resolve, reject) => {
-      sharp(buffer)
-        .toFile('temp.png', (err, info) => {
-          if (err) {
-            winston.error('Error validating thumbnail', err)
-            resolve(false)
-          } else {
-            resolve(true)
-          }
-        });
-    })
+  async publishImage(imageUrl, topic) {
+    try {
+      const response = await fetch(imageUrl)
+      if (response.status && parseInt(response.status) > 299 ) {
+        winston.info(`Failed to download image, statusCode: ${response.status}...`)
+      } else {
+        const image = await response.buffer()
+        await this.client.publish(topic, image)
+      }
+    } catch (e) {
+      winston.error(`Exception when downloading image`, { exception: e })
+    }
   }
 
   async publishBatteryPercentage(deviceSN, percentage) {

@@ -23,7 +23,7 @@ class EufyClient {
     await this.mqttClient.connect()
     winston.debug('----  Connected to MQTT')
 
-    await this.mqttClient.setupAutoDiscovery()
+    await this.mqttClient.setupAutoDiscovery(this.eufyHttpClient.deviceObjects)
     winston.debug('----  Set up auto discovery')
 
     await this.eufyPush.retrievePushCredentials()
@@ -51,6 +51,7 @@ class EufyClient {
 
     if (topic === 'homeassistant/status') {
       if (message === 'online') {
+        winston.debug('HomeAssistant: started')
         await this.onHomeAssistantStartup()
       }
     }
@@ -58,7 +59,7 @@ class EufyClient {
 
   async onHomeAssistantStartup () {
     await this.eufyHttpClient.refreshStoredDevices()
-    await this.mqttClient.setupAutoDiscovery()
+    await this.mqttClient.setupAutoDiscovery(this.eufyHttpClient.deviceObjects)
     await this.eufyDevices.processDeviceProperties()
     await this.eufyDevices.retrieveDeviceThumbnails()
   }

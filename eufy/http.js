@@ -1,12 +1,15 @@
 const { HttpService } = require('eufy-node-client')
 const winston = require('winston')
 const get = require('get-value')
-const DB = require('../db')
 const { supportedDevices } = require('../enums/device_type')
 
 class EufyHttp {
+  devices
+  deviceObjects
+
   constructor (username, password) {
     this.httpService = new HttpService(username, password)
+    this.deviceObjects = []
   }
 
   deviceListUpToDate () {
@@ -40,12 +43,26 @@ class EufyHttp {
   async refreshStoredDevices () {
     const devices = await this.getDevices()
     for (let device of devices) {
-      await DB.createOrUpdateDevice(device)
-      const deviceType = get(device, 'device_model', { default: null })
+      const id = get(device, 'device_sn', { default: null })
+      if (id === null) {
+        winston.error('Cannot get device_sn for device', { device })
+        continue
+      }
 
-      winston.info(`Stored device: ${device.device_name} (${device.device_sn} - type: ${deviceType})`)
+      const station_sn = get(device, 'station_sn', { default: null })
+      const name = get(device, 'device_name', { default: null })
+      const type = get(device, 'device_model', { default: null })
 
-      if (!supportedDevices.includes(deviceType)) {
+      winston.info(`Found device: ${device.device_name} (${device.device_sn} - type: ${type})`)
+
+      this.deviceObjects.push({
+        id,
+        station_sn,
+        name,
+        type
+      })
+
+      if (!supportedDevices.includes(type)) {
         winston.warn(`DEVICE ${device.device_name} NOT SUPPORTED! See: https://github.com/matijse/eufy-ha-mqtt-bridge/issues/7`)
       }
     }
