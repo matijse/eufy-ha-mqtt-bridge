@@ -13,6 +13,7 @@ const deviceType = {
   EUFYCAM_2_PRO: 'T8140',
   EUFYCAM_2_PRO_Z: 'T8140-Z',
   EUFYCAM_E: 'T8112',
+  EUFYCAM_SOLO_C24: 'T8441',
   FLOODLIGHT_CAMERA: 'T8420',
   FLOODLIGHT_CAMERA_X: 'T8420X',
   FLOODLIGHT_CAMERA_2: 'T8422',
@@ -95,6 +96,14 @@ const capabilities = {
     NotificationType.EVENT_MOTION_DETECTED,
     NotificationType.THUMBNAIL,
     SensorType.BATTERY_PERCENTAGE,
+  ],
+  [deviceType.EUFYCAM_SOLO_C24]: [
+    NotificationType.EVENT_MOTION_DETECTED,
+    NotificationType.EVENT_PERSON_DETECTED,
+    NotificationType.EVENT_CRYING_DETECTED,
+    NotificationType.EVENT_SOUND_DETECTED,
+    NotificationType.EVENT_PET_DETECTED,
+    NotificationType.THUMBNAIL,
   ],
   [deviceType.FLOODLIGHT_CAMERA]: [
     NotificationType.EVENT_MOTION_DETECTED,
