@@ -18,6 +18,7 @@ const deviceType = {
   FLOODLIGHT_CAMERA: 'T8420',
   FLOODLIGHT_CAMERA_X: 'T8420X',
   FLOODLIGHT_CAMERA_2: 'T8422',
+  FLOODLIGHT_CAMERA_2_: 'T8423',
   INDOOR_CAM_2K: 'T8400',
   INDOOR_CAM_1080P: 'T8401',
   INDOOR_CAM_2K_PAN_TILT: 'T8410',
@@ -126,6 +127,11 @@ const capabilities = {
     NotificationType.EVENT_PERSON_DETECTED,
     NotificationType.THUMBNAIL,
   ],
+   [deviceType.FLOODLIGHT_CAMERA_2_]: [
+    NotificationType.EVENT_MOTION_DETECTED,
+    NotificationType.EVENT_PERSON_DETECTED,
+    NotificationType.THUMBNAIL,
+      ],
   [deviceType.INDOOR_CAM_2K]: [
     NotificationType.EVENT_MOTION_DETECTED,
     NotificationType.EVENT_PERSON_DETECTED,
