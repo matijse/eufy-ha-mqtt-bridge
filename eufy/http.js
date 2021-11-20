@@ -1,4 +1,4 @@
-const { HttpService } = require('eufy-node-client')
+const { HTTPApi } = require('eufy-security-client')
 const winston = require('winston')
 const get = require('get-value')
 const { supportedDevices } = require('../enums/device_type')
@@ -8,7 +8,7 @@ class EufyHttp {
   deviceObjects
 
   constructor (username, password) {
-    this.httpService = new HttpService(username, password)
+    this.httpApi = new HTTPApi(username, password)
     this.deviceObjects = []
   }
 
@@ -29,9 +29,10 @@ class EufyHttp {
     winston.debug('Refreshing devices...')
 
     try {
-      this.devices = await this.httpService.listDevices()
+      await this.httpApi.updateDeviceInfo()
+      this.devices = Object.values(this.httpApi.getDevices())
     } catch (e) {
-      winston.error(`Error -- httpService.listDevices`, e)
+      winston.error(`Error -- httpApi.getDevices`, e)
       this.devices = []
     }
     this.devicesRefreshedAt = new Date().getTime()
@@ -70,19 +71,19 @@ class EufyHttp {
 
   async registerPushToken (fcmToken) {
     try {
-      const response = await this.httpService.registerPushToken(fcmToken);
+      const response = await this.httpApi.registerPushToken(fcmToken);
       winston.info(`Registered Push Token`, { response })
     } catch (e) {
-      winston.error(`Error -- httpService.registerPushToken`, e)
+      winston.error(`Error -- httpApi.registerPushToken`, e)
     }
   }
 
   async checkPushToken () {
     try {
-      const response = await this.httpService.pushTokenCheck()
+      const response = await this.httpApi.checkPushToken()
       winston.info(`Checked Push Token`, { response })
     } catch (e) {
-      winston.error(`Error -- httpService.pushTokenCheck`, e)
+      winston.error(`Error -- httpApi.checkPushToken`, e)
     }
   }
 }
