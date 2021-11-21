@@ -1,3 +1,11 @@
+# :warning: No longer actively maintained
+
+Since there are now better alternatives with more features, I decided to no longer actively develop this script. 
+
+* For Home Assistant users, I recommend the integration by @fuatakgun: https://github.com/fuatakgun/eufy_security, which uses the library by @bropat
+* Generic library with more features and active development by @bropat: https://github.com/bropat/eufy-security-client
+* Small wrapper around this library, to access it via webscokets which can be used in many scenario's: https://github.com/bropat/eufy-security-ws
+
 # Eufy Home Assistant MQTT Bridge
 
 This script subscribes to push notifications of the Eufy Security app and publishes events via MQTT to Home Assistant.
