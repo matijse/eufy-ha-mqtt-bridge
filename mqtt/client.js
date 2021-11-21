@@ -2,7 +2,7 @@ const MQTT = require('async-mqtt')
 const get = require('get-value')
 const fetch = require('node-fetch')
 const winston = require('winston')
-const { sleep } = require('eufy-node-client')
+const { sleep } = require('eufy-security-client/build/push/utils')
 const config = require('../config')
 const { NotificationType, NotificationTypeByString, NotificationTypeByPushType,
   supportedNotificationTypes, supportedNotificationStrings, supportedNotificationPushTypes } = require('../enums/notification_type')

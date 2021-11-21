@@ -26,9 +26,6 @@ class EufyClient {
     await this.mqttClient.setupAutoDiscovery(this.eufyHttpClient.deviceObjects)
     winston.debug('----  Set up auto discovery')
 
-    await this.eufyPush.retrievePushCredentials()
-    winston.debug('----  Retrieved push credentials')
-
     await this.eufyPush.startPushClient()
     winston.debug('----  Started push client')
 
