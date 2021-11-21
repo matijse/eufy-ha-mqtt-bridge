@@ -3,8 +3,7 @@
 This script subscribes to push notifications of the Eufy Security app and publishes events via MQTT to Home Assistant.
 When using auto discovery, it automatically creates a device with sensors within Home Assistant.
 
-Uses the [eufy-node-client](https://github.com/JanLoebel/eufy-node-client) by JanLoebel and is heavily inspired on
-its examples.
+Uses the [eufy-security-client](https://github.com/bropat/eufy-security-client).
 
 ## Create a second Eufy account!
 
